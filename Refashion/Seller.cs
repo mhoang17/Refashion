@@ -8,8 +8,7 @@ namespace Refashion
     {
         // Field
         private int tag;
-        private string firstName;
-        private string lastName;
+        private string name;
         private string email;
         private string address;
         private string city;
@@ -21,12 +20,11 @@ namespace Refashion
         // TODO: Have to discuss how we give a user a tag.
 
         // TODO: maybe delete this constructor after discussion.
-        public Seller(int tag, string firstName, string lastName, string email, string address, string city, int zip, int phonenumber)
+        public Seller(int tag, string name, string email, string address, string city, int zip, int phonenumber)
         {
 
             this.tag = tag;
-            this.firstName = firstName;
-            this.lastName = lastName;
+            this.name = name;
             this.email = email;
             this.address = address;
             this.city = city;
@@ -36,12 +34,11 @@ namespace Refashion
             joinDate = DateTime.Today;
         }
 
-        public Seller(string firstName, string lastName, string email, string address, string city, int zip, int phonenumber) {
+        public Seller(string name, string email, string address, string city, int zip, int phonenumber) {
 
             // TODO: Have a concrete value and no longer the default value.
             this.tag = 1;
-            this.firstName = firstName;
-            this.lastName = lastName;
+            this.name = name;
             this.email = email;
             this.address = address;
             this.city = city;
@@ -54,8 +51,7 @@ namespace Refashion
         // Getters and setters
         // You can only retrieve seller tag.
         public int Tag { get { return tag; } }
-        public string FirstName { get { return firstName; } set { firstName = value; } }
-        public string LastName { get { return lastName; } set { lastName = value; } }
+        public string Name { get { return name; } set { name = value; } }
         public string Email { get { return email; } set { email = value; } }
         public string Address { get { return address; } set { address = value; } }
         public string City { get { return city; } set { city = value; } }

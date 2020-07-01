@@ -64,19 +64,10 @@ namespace Refashion_UI
         }
 
         // If enter is pressed in any of the textboxes, then behave just like if the save button has been pressed
-        private void sellerFirstNameTextBox_KeyDown(object sender, KeyEventArgs e)
+        private void sellerNameTextBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyData == Keys.Enter) {
 
-                saveSellerInformation(e);
-                e.SuppressKeyPress = true;
-            }
-        }
-
-        private void sellerLastNameTextBox_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyData == Keys.Enter)
-            {
                 saveSellerInformation(e);
                 e.SuppressKeyPress = true;
             }
@@ -131,8 +122,8 @@ namespace Refashion_UI
         private void saveSellerInformation(EventArgs e) {
 
             // Initialize variables to those the user has written in the client
-            string firstName = sellerFirstNameTextBox.Text;
-            string lastName = sellerLastNameTextBox.Text;
+            // TODO: Discuss if the name should be split into first- and lastname
+            string name = sellerNameTextBox.Text;
             string email = sellerEmailTextBox.Text;
             string address = sellerAddressTextBox.Text;
             string city = sellerCityTextBox.Text;
@@ -141,8 +132,7 @@ namespace Refashion_UI
 
             // Check if all information has been filled
             // TODO: Give proper response to that information is missing
-            if (string.IsNullOrEmpty(firstName) ||
-                string.IsNullOrEmpty(lastName) ||
+            if (string.IsNullOrEmpty(name) ||
                 string.IsNullOrEmpty(email) ||
                 string.IsNullOrEmpty(address) ||
                 string.IsNullOrEmpty(city) ||
@@ -151,19 +141,18 @@ namespace Refashion_UI
                 return;
 
             // Create a seller
-            Seller newSeller = new Seller(sellerTags, firstName, lastName, email, address, city, (int)Int64.Parse(zip), (int)Int64.Parse(phoneNumber));
+            Seller newSeller = new Seller(sellerTags, name, email, address, city, (int)Int64.Parse(zip), (int)Int64.Parse(phoneNumber));
 
             // TODO: Delete this when we have the real database
             sellers.Add(newSeller);
 
             // Add the seller tag and name to the sellerlist in UI
             ListViewItem sellerItem = new ListViewItem(tagExtender(newSeller.Tag));
-            sellerItem.SubItems.Add(firstName + " " + lastName);
+            sellerItem.SubItems.Add(name);
             sellerListView.Items.Add(sellerItem);
 
             // Clear the textboxes
-            sellerFirstNameTextBox.Clear();
-            sellerLastNameTextBox.Clear();
+            sellerNameTextBox.Clear();
             sellerEmailTextBox.Clear();
             sellerAddressTextBox.Clear();
             sellerCityTextBox.Clear();
@@ -202,7 +191,7 @@ namespace Refashion_UI
                             // Display seller information
                             newSellerGroupBox.Visible = false;
                             sellerTagInfoLabel.Text = sellerTagString;
-                            sellerNameInfoBox.Text = seller.FirstName + " " + seller.LastName;
+                            sellerNameInfoBox.Text = seller.Name;
                             sellerEmailInfoBox.Text = seller.Email;
                             sellerAddressInfoBox.Text = seller.Address;
                             sellerZIPCityInfoBox.Text = seller.ZIP + " " + seller.City;
@@ -220,6 +209,7 @@ namespace Refashion_UI
             }
 
         }
+
 
         // Put 0's infront of the tag number
         private string tagExtender(int sellerTag)
@@ -266,6 +256,8 @@ namespace Refashion_UI
             return (int) Int64.Parse(sellerTagPlaceholder);
         }
 
+
+        // Methods used when editing the seller's informations
         private void editSellerInfoBtn_Click(object sender, EventArgs e)
         {
             // Make the textboxes editable
@@ -283,9 +275,89 @@ namespace Refashion_UI
             cancelSellerInfoBtn.Visible = true;
         }
 
+        private void cancelSellerInfoBtn_Click(object sender, EventArgs e)
+        {
+            int sellerTag = tagDecreaser(sellerTagInfoLabel.Text);
+
+            foreach (Seller seller in sellers)
+            {
+                if (seller.Tag == sellerTag)
+                {
+                    // Reset the information if they have been edited
+                    sellerNameInfoBox.Text = seller.Name;
+                    sellerEmailInfoBox.Text = seller.Email;
+                    sellerAddressInfoBox.Text = seller.Address;
+                    sellerZIPCityInfoBox.Text = seller.ZIP + " " + seller.City;
+                    sellerPhoneInfoBox.Text = seller.PhoneNumber.ToString();
+
+                    // Make the textboxes non-editable
+                    sellerNameInfoBox.ReadOnly = true;
+                    sellerAddressInfoBox.ReadOnly = true;
+                    sellerZIPCityInfoBox.ReadOnly = true;
+                    sellerPhoneInfoBox.ReadOnly = true;
+                    sellerEmailInfoBox.ReadOnly = true;
+
+                    // Change the buttons
+                    editSellerInfoBtn.Visible = true;
+                    saveSellerInfoBtn.Visible = false;
+                    cancelSellerInfoBtn.Visible = false;
+                }
+
+            }
+        }
+
         private void saveSellerInfoBtn_Click(object sender, EventArgs e)
         {
+            saveSellerEdit();
+        }
 
+        private void sellerNameInfoBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyData == Keys.Enter)
+            {
+                saveSellerEdit();
+                e.SuppressKeyPress = true;
+            }
+        }
+
+        private void sellerAddressInfoBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyData == Keys.Enter)
+            {
+                saveSellerEdit();
+                e.SuppressKeyPress = true;
+            }
+        }
+
+        private void sellerZIPCityInfoBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyData == Keys.Enter)
+            {
+                saveSellerEdit();
+                e.SuppressKeyPress = true;
+            }
+        }
+
+        private void sellerPhoneInfoBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyData == Keys.Enter)
+            {
+                saveSellerEdit();
+                e.SuppressKeyPress = true;
+            }
+        }
+
+        private void sellerEmailInfoBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyData == Keys.Enter)
+            {
+                saveSellerEdit();
+                e.SuppressKeyPress = true;
+            }
+        }
+
+        private void saveSellerEdit()
+        {
             int zipLength = 4;
             int cityStartIdx = 5;
 
@@ -293,7 +365,7 @@ namespace Refashion_UI
             string email = sellerEmailInfoBox.Text;
             string address = sellerAddressInfoBox.Text;
             string zip = sellerZIPCityInfoBox.Text.Substring(0, zipLength);
-            string city = sellerZIPCityInfoBox.Text.Substring(cityStartIdx, sellerZIPCityInfoBox.Text.Length-cityStartIdx);
+            string city = sellerZIPCityInfoBox.Text.Substring(cityStartIdx, sellerZIPCityInfoBox.Text.Length - cityStartIdx);
             string phoneNumber = sellerPhoneInfoBox.Text;
 
             // Check if all information has been filled
@@ -313,12 +385,11 @@ namespace Refashion_UI
             {
                 if (seller.Tag == sellerTag)
                 {
-                    // TODO: name is no longer separated into first and last name, so this needs to be fixed.
-                    seller.FirstName = name;
+                    seller.Name = name;
                     seller.Address = address;
                     seller.City = city;
-                    seller.ZIP = (int) Int64.Parse(zip);
-                    seller.PhoneNumber = (int) Int64.Parse(phoneNumber);
+                    seller.ZIP = (int)Int64.Parse(zip);
+                    seller.PhoneNumber = (int)Int64.Parse(phoneNumber);
 
                     // Make the textboxes non-editable
                     sellerNameInfoBox.ReadOnly = true;
@@ -333,37 +404,6 @@ namespace Refashion_UI
                     cancelSellerInfoBtn.Visible = false;
                 }
 
-            }
-        }
-
-        private void cancelSellerInfoBtn_Click(object sender, EventArgs e)
-        {
-            int sellerTag = tagDecreaser(sellerTagInfoLabel.Text);
-
-            foreach (Seller seller in sellers)
-            {
-                if (seller.Tag == sellerTag)
-                {
-                    // Reset the information if they have been edited
-                    sellerNameInfoBox.Text = seller.FirstName + " " + seller.LastName;
-                    sellerEmailInfoBox.Text = seller.Email;
-                    sellerAddressInfoBox.Text = seller.Address;
-                    sellerZIPCityInfoBox.Text = seller.ZIP + " " + seller.City;
-                    sellerPhoneInfoBox.Text = seller.PhoneNumber.ToString();
-
-                    // Make the textboxes non-editable
-                    sellerNameInfoBox.ReadOnly = true;
-                    sellerAddressInfoBox.ReadOnly = true;
-                    sellerZIPCityInfoBox.ReadOnly = true;
-                    sellerPhoneInfoBox.ReadOnly = true;
-                    sellerEmailInfoBox.ReadOnly = true;
-
-                    // Change the buttons
-                    editSellerInfoBtn.Visible = true;
-                    saveSellerInfoBtn.Visible = false;
-                    cancelSellerInfoBtn.Visible = false;
-                }
-        
             }
         }
     }

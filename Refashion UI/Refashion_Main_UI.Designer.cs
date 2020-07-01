@@ -35,42 +35,40 @@
             this.SellerName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.userListSearchBox = new System.Windows.Forms.ComboBox();
             this.newSellerBtn = new System.Windows.Forms.Button();
-            this.sellerFirstNameLabel = new System.Windows.Forms.Label();
+            this.sellerNameLabel = new System.Windows.Forms.Label();
             this.sellerAddressLabel = new System.Windows.Forms.Label();
             this.sellerZipLabel = new System.Windows.Forms.Label();
             this.sellerPhoneLabel = new System.Windows.Forms.Label();
             this.sellerCityLabel = new System.Windows.Forms.Label();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.sellerFirstNameTextBox = new System.Windows.Forms.TextBox();
+            this.sellerNameTextBox = new System.Windows.Forms.TextBox();
             this.sellerAddressTextBox = new System.Windows.Forms.TextBox();
             this.sellerCityTextBox = new System.Windows.Forms.TextBox();
             this.sellerZIPTextBox = new System.Windows.Forms.TextBox();
             this.sellerPhoneTextBox = new System.Windows.Forms.TextBox();
             this.saveNewSellerBtn = new System.Windows.Forms.Button();
-            this.sellerLastNameTextBox = new System.Windows.Forms.TextBox();
-            this.sellerLastNameLabel = new System.Windows.Forms.Label();
             this.newSellerGroupBox = new System.Windows.Forms.GroupBox();
             this.sellerEmailLabel = new System.Windows.Forms.Label();
             this.sellerEmailTextBox = new System.Windows.Forms.TextBox();
             this.tabPage = new System.Windows.Forms.TabControl();
             this.sellerTab = new System.Windows.Forms.TabPage();
+            this.sellerSeparator = new System.Windows.Forms.Label();
             this.sellerInformationGroupBox = new System.Windows.Forms.GroupBox();
             this.sellerInformation = new System.Windows.Forms.GroupBox();
+            this.sellerTagInfoLabel = new System.Windows.Forms.Label();
+            this.cancelSellerInfoBtn = new System.Windows.Forms.Button();
+            this.saveSellerInfoBtn = new System.Windows.Forms.Button();
+            this.sellerEmailInfoBox = new System.Windows.Forms.TextBox();
+            this.sellerPhoneInfoBox = new System.Windows.Forms.TextBox();
+            this.sellerZIPCityInfoBox = new System.Windows.Forms.TextBox();
+            this.sellerAddressInfoBox = new System.Windows.Forms.TextBox();
+            this.sellerNameInfoBox = new System.Windows.Forms.TextBox();
             this.sellerJoinDateInfoBox = new System.Windows.Forms.Label();
             this.editSellerInfoBtn = new System.Windows.Forms.Button();
             this.sellerTabPage = new System.Windows.Forms.Label();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.tabIcons = new System.Windows.Forms.ImageList(this.components);
-            this.sellerSeparator = new System.Windows.Forms.Label();
-            this.sellerNameInfoBox = new System.Windows.Forms.TextBox();
-            this.sellerAddressInfoBox = new System.Windows.Forms.TextBox();
-            this.sellerZIPCityInfoBox = new System.Windows.Forms.TextBox();
-            this.sellerPhoneInfoBox = new System.Windows.Forms.TextBox();
-            this.sellerEmailInfoBox = new System.Windows.Forms.TextBox();
-            this.saveSellerInfoBtn = new System.Windows.Forms.Button();
-            this.cancelSellerInfoBtn = new System.Windows.Forms.Button();
-            this.sellerTagInfoLabel = new System.Windows.Forms.Label();
             this.newSellerGroupBox.SuspendLayout();
             this.tabPage.SuspendLayout();
             this.sellerTab.SuspendLayout();
@@ -123,21 +121,21 @@
             this.newSellerBtn.UseVisualStyleBackColor = false;
             this.newSellerBtn.Click += new System.EventHandler(this.newSellerBtn_Click);
             // 
-            // sellerFirstNameLabel
+            // sellerNameLabel
             // 
-            this.sellerFirstNameLabel.AutoSize = true;
-            this.sellerFirstNameLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.sellerFirstNameLabel.Location = new System.Drawing.Point(242, 116);
-            this.sellerFirstNameLabel.Name = "sellerFirstNameLabel";
-            this.sellerFirstNameLabel.Size = new System.Drawing.Size(90, 25);
-            this.sellerFirstNameLabel.TabIndex = 4;
-            this.sellerFirstNameLabel.Text = "Fornavn:";
+            this.sellerNameLabel.AutoSize = true;
+            this.sellerNameLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.sellerNameLabel.Location = new System.Drawing.Point(268, 116);
+            this.sellerNameLabel.Name = "sellerNameLabel";
+            this.sellerNameLabel.Size = new System.Drawing.Size(64, 25);
+            this.sellerNameLabel.TabIndex = 4;
+            this.sellerNameLabel.Text = "Navn:";
             // 
             // sellerAddressLabel
             // 
             this.sellerAddressLabel.AutoSize = true;
             this.sellerAddressLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.sellerAddressLabel.Location = new System.Drawing.Point(242, 234);
+            this.sellerAddressLabel.Location = new System.Drawing.Point(242, 198);
             this.sellerAddressLabel.Name = "sellerAddressLabel";
             this.sellerAddressLabel.Size = new System.Drawing.Size(91, 25);
             this.sellerAddressLabel.TabIndex = 5;
@@ -147,7 +145,7 @@
             // 
             this.sellerZipLabel.AutoSize = true;
             this.sellerZipLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.sellerZipLabel.Location = new System.Drawing.Point(211, 275);
+            this.sellerZipLabel.Location = new System.Drawing.Point(211, 239);
             this.sellerZipLabel.Name = "sellerZipLabel";
             this.sellerZipLabel.Size = new System.Drawing.Size(128, 25);
             this.sellerZipLabel.TabIndex = 6;
@@ -157,7 +155,7 @@
             // 
             this.sellerPhoneLabel.AutoSize = true;
             this.sellerPhoneLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.sellerPhoneLabel.Location = new System.Drawing.Point(188, 318);
+            this.sellerPhoneLabel.Location = new System.Drawing.Point(188, 282);
             this.sellerPhoneLabel.Name = "sellerPhoneLabel";
             this.sellerPhoneLabel.Size = new System.Drawing.Size(155, 25);
             this.sellerPhoneLabel.TabIndex = 7;
@@ -167,7 +165,7 @@
             // 
             this.sellerCityLabel.AutoSize = true;
             this.sellerCityLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.sellerCityLabel.Location = new System.Drawing.Point(543, 275);
+            this.sellerCityLabel.Location = new System.Drawing.Point(543, 239);
             this.sellerCityLabel.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.sellerCityLabel.Name = "sellerCityLabel";
             this.sellerCityLabel.Size = new System.Drawing.Size(41, 25);
@@ -180,20 +178,20 @@
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
             // 
-            // sellerFirstNameTextBox
+            // sellerNameTextBox
             // 
-            this.sellerFirstNameTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.sellerFirstNameTextBox.Location = new System.Drawing.Point(370, 116);
-            this.sellerFirstNameTextBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.sellerFirstNameTextBox.Name = "sellerFirstNameTextBox";
-            this.sellerFirstNameTextBox.Size = new System.Drawing.Size(506, 30);
-            this.sellerFirstNameTextBox.TabIndex = 10;
-            this.sellerFirstNameTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.sellerFirstNameTextBox_KeyDown);
+            this.sellerNameTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.sellerNameTextBox.Location = new System.Drawing.Point(370, 116);
+            this.sellerNameTextBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.sellerNameTextBox.Name = "sellerNameTextBox";
+            this.sellerNameTextBox.Size = new System.Drawing.Size(506, 30);
+            this.sellerNameTextBox.TabIndex = 10;
+            this.sellerNameTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.sellerNameTextBox_KeyDown);
             // 
             // sellerAddressTextBox
             // 
             this.sellerAddressTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.sellerAddressTextBox.Location = new System.Drawing.Point(370, 232);
+            this.sellerAddressTextBox.Location = new System.Drawing.Point(370, 196);
             this.sellerAddressTextBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.sellerAddressTextBox.Name = "sellerAddressTextBox";
             this.sellerAddressTextBox.Size = new System.Drawing.Size(506, 30);
@@ -203,7 +201,7 @@
             // sellerCityTextBox
             // 
             this.sellerCityTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.sellerCityTextBox.Location = new System.Drawing.Point(604, 272);
+            this.sellerCityTextBox.Location = new System.Drawing.Point(604, 236);
             this.sellerCityTextBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.sellerCityTextBox.Name = "sellerCityTextBox";
             this.sellerCityTextBox.Size = new System.Drawing.Size(272, 30);
@@ -213,7 +211,7 @@
             // sellerZIPTextBox
             // 
             this.sellerZIPTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.sellerZIPTextBox.Location = new System.Drawing.Point(369, 272);
+            this.sellerZIPTextBox.Location = new System.Drawing.Point(369, 236);
             this.sellerZIPTextBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.sellerZIPTextBox.Name = "sellerZIPTextBox";
             this.sellerZIPTextBox.Size = new System.Drawing.Size(104, 30);
@@ -224,7 +222,7 @@
             // sellerPhoneTextBox
             // 
             this.sellerPhoneTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.sellerPhoneTextBox.Location = new System.Drawing.Point(369, 317);
+            this.sellerPhoneTextBox.Location = new System.Drawing.Point(369, 281);
             this.sellerPhoneTextBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.sellerPhoneTextBox.Name = "sellerPhoneTextBox";
             this.sellerPhoneTextBox.Size = new System.Drawing.Size(506, 30);
@@ -235,7 +233,7 @@
             // saveNewSellerBtn
             // 
             this.saveNewSellerBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.saveNewSellerBtn.Location = new System.Drawing.Point(763, 371);
+            this.saveNewSellerBtn.Location = new System.Drawing.Point(763, 335);
             this.saveNewSellerBtn.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.saveNewSellerBtn.Name = "saveNewSellerBtn";
             this.saveNewSellerBtn.Size = new System.Drawing.Size(112, 35);
@@ -244,35 +242,13 @@
             this.saveNewSellerBtn.UseVisualStyleBackColor = true;
             this.saveNewSellerBtn.Click += new System.EventHandler(this.saveNewSellerBtn_Click);
             // 
-            // sellerLastNameTextBox
-            // 
-            this.sellerLastNameTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.sellerLastNameTextBox.Location = new System.Drawing.Point(370, 152);
-            this.sellerLastNameTextBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.sellerLastNameTextBox.Name = "sellerLastNameTextBox";
-            this.sellerLastNameTextBox.Size = new System.Drawing.Size(506, 30);
-            this.sellerLastNameTextBox.TabIndex = 11;
-            this.sellerLastNameTextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.sellerLastNameTextBox_KeyDown);
-            // 
-            // sellerLastNameLabel
-            // 
-            this.sellerLastNameLabel.AutoSize = true;
-            this.sellerLastNameLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.sellerLastNameLabel.Location = new System.Drawing.Point(232, 157);
-            this.sellerLastNameLabel.Name = "sellerLastNameLabel";
-            this.sellerLastNameLabel.Size = new System.Drawing.Size(101, 25);
-            this.sellerLastNameLabel.TabIndex = 16;
-            this.sellerLastNameLabel.Text = "Efternavn:";
-            // 
             // newSellerGroupBox
             // 
             this.newSellerGroupBox.Controls.Add(this.sellerEmailLabel);
             this.newSellerGroupBox.Controls.Add(this.sellerEmailTextBox);
-            this.newSellerGroupBox.Controls.Add(this.sellerFirstNameTextBox);
-            this.newSellerGroupBox.Controls.Add(this.sellerFirstNameLabel);
-            this.newSellerGroupBox.Controls.Add(this.sellerLastNameTextBox);
+            this.newSellerGroupBox.Controls.Add(this.sellerNameTextBox);
+            this.newSellerGroupBox.Controls.Add(this.sellerNameLabel);
             this.newSellerGroupBox.Controls.Add(this.sellerAddressLabel);
-            this.newSellerGroupBox.Controls.Add(this.sellerLastNameLabel);
             this.newSellerGroupBox.Controls.Add(this.sellerZipLabel);
             this.newSellerGroupBox.Controls.Add(this.saveNewSellerBtn);
             this.newSellerGroupBox.Controls.Add(this.sellerPhoneLabel);
@@ -294,7 +270,7 @@
             // 
             this.sellerEmailLabel.AutoSize = true;
             this.sellerEmailLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.sellerEmailLabel.Location = new System.Drawing.Point(259, 195);
+            this.sellerEmailLabel.Location = new System.Drawing.Point(259, 159);
             this.sellerEmailLabel.Name = "sellerEmailLabel";
             this.sellerEmailLabel.Size = new System.Drawing.Size(73, 25);
             this.sellerEmailLabel.TabIndex = 17;
@@ -303,7 +279,7 @@
             // sellerEmailTextBox
             // 
             this.sellerEmailTextBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.sellerEmailTextBox.Location = new System.Drawing.Point(370, 192);
+            this.sellerEmailTextBox.Location = new System.Drawing.Point(370, 156);
             this.sellerEmailTextBox.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.sellerEmailTextBox.Name = "sellerEmailTextBox";
             this.sellerEmailTextBox.Size = new System.Drawing.Size(506, 30);
@@ -344,6 +320,14 @@
             this.sellerTab.TabIndex = 0;
             this.sellerTab.UseVisualStyleBackColor = true;
             // 
+            // sellerSeparator
+            // 
+            this.sellerSeparator.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.sellerSeparator.Location = new System.Drawing.Point(53, 128);
+            this.sellerSeparator.Name = "sellerSeparator";
+            this.sellerSeparator.Size = new System.Drawing.Size(1487, 10);
+            this.sellerSeparator.TabIndex = 1;
+            // 
             // sellerInformationGroupBox
             // 
             this.sellerInformationGroupBox.Controls.Add(this.sellerInformation);
@@ -375,11 +359,113 @@
             this.sellerInformation.TabIndex = 0;
             this.sellerInformation.TabStop = false;
             // 
+            // sellerTagInfoLabel
+            // 
+            this.sellerTagInfoLabel.AutoSize = true;
+            this.sellerTagInfoLabel.Location = new System.Drawing.Point(33, 46);
+            this.sellerTagInfoLabel.Name = "sellerTagInfoLabel";
+            this.sellerTagInfoLabel.Size = new System.Drawing.Size(130, 46);
+            this.sellerTagInfoLabel.TabIndex = 14;
+            this.sellerTagInfoLabel.Text = "0000#";
+            // 
+            // cancelSellerInfoBtn
+            // 
+            this.cancelSellerInfoBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.cancelSellerInfoBtn.Location = new System.Drawing.Point(693, 214);
+            this.cancelSellerInfoBtn.Name = "cancelSellerInfoBtn";
+            this.cancelSellerInfoBtn.Size = new System.Drawing.Size(125, 34);
+            this.cancelSellerInfoBtn.TabIndex = 13;
+            this.cancelSellerInfoBtn.Text = "Annuller";
+            this.cancelSellerInfoBtn.UseVisualStyleBackColor = true;
+            this.cancelSellerInfoBtn.Visible = false;
+            this.cancelSellerInfoBtn.Click += new System.EventHandler(this.cancelSellerInfoBtn_Click);
+            // 
+            // saveSellerInfoBtn
+            // 
+            this.saveSellerInfoBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.saveSellerInfoBtn.Location = new System.Drawing.Point(524, 214);
+            this.saveSellerInfoBtn.Name = "saveSellerInfoBtn";
+            this.saveSellerInfoBtn.Size = new System.Drawing.Size(125, 34);
+            this.saveSellerInfoBtn.TabIndex = 12;
+            this.saveSellerInfoBtn.Text = "Gem";
+            this.saveSellerInfoBtn.UseVisualStyleBackColor = true;
+            this.saveSellerInfoBtn.Visible = false;
+            this.saveSellerInfoBtn.Click += new System.EventHandler(this.saveSellerInfoBtn_Click);
+            // 
+            // sellerEmailInfoBox
+            // 
+            this.sellerEmailInfoBox.BackColor = System.Drawing.Color.Honeydew;
+            this.sellerEmailInfoBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.sellerEmailInfoBox.Cursor = System.Windows.Forms.Cursors.Default;
+            this.sellerEmailInfoBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.sellerEmailInfoBox.Location = new System.Drawing.Point(41, 229);
+            this.sellerEmailInfoBox.Name = "sellerEmailInfoBox";
+            this.sellerEmailInfoBox.ReadOnly = true;
+            this.sellerEmailInfoBox.Size = new System.Drawing.Size(436, 28);
+            this.sellerEmailInfoBox.TabIndex = 11;
+            this.sellerEmailInfoBox.Text = "Default";
+            this.sellerEmailInfoBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.sellerEmailInfoBox_KeyDown);
+            // 
+            // sellerPhoneInfoBox
+            // 
+            this.sellerPhoneInfoBox.BackColor = System.Drawing.Color.Honeydew;
+            this.sellerPhoneInfoBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.sellerPhoneInfoBox.Cursor = System.Windows.Forms.Cursors.Default;
+            this.sellerPhoneInfoBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.sellerPhoneInfoBox.Location = new System.Drawing.Point(41, 183);
+            this.sellerPhoneInfoBox.Name = "sellerPhoneInfoBox";
+            this.sellerPhoneInfoBox.ReadOnly = true;
+            this.sellerPhoneInfoBox.Size = new System.Drawing.Size(436, 28);
+            this.sellerPhoneInfoBox.TabIndex = 10;
+            this.sellerPhoneInfoBox.Text = "Default";
+            this.sellerPhoneInfoBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.sellerPhoneInfoBox_KeyDown);
+            // 
+            // sellerZIPCityInfoBox
+            // 
+            this.sellerZIPCityInfoBox.BackColor = System.Drawing.Color.Honeydew;
+            this.sellerZIPCityInfoBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.sellerZIPCityInfoBox.Cursor = System.Windows.Forms.Cursors.Default;
+            this.sellerZIPCityInfoBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.sellerZIPCityInfoBox.Location = new System.Drawing.Point(41, 143);
+            this.sellerZIPCityInfoBox.Name = "sellerZIPCityInfoBox";
+            this.sellerZIPCityInfoBox.ReadOnly = true;
+            this.sellerZIPCityInfoBox.Size = new System.Drawing.Size(436, 28);
+            this.sellerZIPCityInfoBox.TabIndex = 9;
+            this.sellerZIPCityInfoBox.Text = "Default";
+            this.sellerZIPCityInfoBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.sellerZIPCityInfoBox_KeyDown);
+            // 
+            // sellerAddressInfoBox
+            // 
+            this.sellerAddressInfoBox.BackColor = System.Drawing.Color.Honeydew;
+            this.sellerAddressInfoBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.sellerAddressInfoBox.Cursor = System.Windows.Forms.Cursors.Default;
+            this.sellerAddressInfoBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.sellerAddressInfoBox.Location = new System.Drawing.Point(41, 102);
+            this.sellerAddressInfoBox.Name = "sellerAddressInfoBox";
+            this.sellerAddressInfoBox.ReadOnly = true;
+            this.sellerAddressInfoBox.Size = new System.Drawing.Size(436, 28);
+            this.sellerAddressInfoBox.TabIndex = 8;
+            this.sellerAddressInfoBox.Text = "Default";
+            this.sellerAddressInfoBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.sellerAddressInfoBox_KeyDown);
+            // 
+            // sellerNameInfoBox
+            // 
+            this.sellerNameInfoBox.BackColor = System.Drawing.Color.Honeydew;
+            this.sellerNameInfoBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.sellerNameInfoBox.Cursor = System.Windows.Forms.Cursors.Default;
+            this.sellerNameInfoBox.Location = new System.Drawing.Point(169, 46);
+            this.sellerNameInfoBox.Name = "sellerNameInfoBox";
+            this.sellerNameInfoBox.ReadOnly = true;
+            this.sellerNameInfoBox.Size = new System.Drawing.Size(603, 46);
+            this.sellerNameInfoBox.TabIndex = 7;
+            this.sellerNameInfoBox.Text = "Test";
+            this.sellerNameInfoBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.sellerNameInfoBox_KeyDown);
+            // 
             // sellerJoinDateInfoBox
             // 
             this.sellerJoinDateInfoBox.AutoSize = true;
             this.sellerJoinDateInfoBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.sellerJoinDateInfoBox.Location = new System.Drawing.Point(642, 134);
+            this.sellerJoinDateInfoBox.Location = new System.Drawing.Point(519, 128);
             this.sellerJoinDateInfoBox.Name = "sellerJoinDateInfoBox";
             this.sellerJoinDateInfoBox.Size = new System.Drawing.Size(257, 29);
             this.sellerJoinDateInfoBox.TabIndex = 6;
@@ -388,7 +474,7 @@
             // editSellerInfoBtn
             // 
             this.editSellerInfoBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.editSellerInfoBtn.Location = new System.Drawing.Point(647, 220);
+            this.editSellerInfoBtn.Location = new System.Drawing.Point(524, 214);
             this.editSellerInfoBtn.Name = "editSellerInfoBtn";
             this.editSellerInfoBtn.Size = new System.Drawing.Size(125, 34);
             this.editSellerInfoBtn.TabIndex = 5;
@@ -432,111 +518,6 @@
             this.tabIcons.TransparentColor = System.Drawing.Color.Transparent;
             this.tabIcons.Images.SetKeyName(0, "SellerIcon.png");
             // 
-            // sellerSeparator
-            // 
-            this.sellerSeparator.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.sellerSeparator.Location = new System.Drawing.Point(53, 128);
-            this.sellerSeparator.Name = "sellerSeparator";
-            this.sellerSeparator.Size = new System.Drawing.Size(1487, 10);
-            this.sellerSeparator.TabIndex = 1;
-            // 
-            // sellerNameInfoBox
-            // 
-            this.sellerNameInfoBox.BackColor = System.Drawing.Color.Honeydew;
-            this.sellerNameInfoBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.sellerNameInfoBox.Cursor = System.Windows.Forms.Cursors.Default;
-            this.sellerNameInfoBox.Location = new System.Drawing.Point(169, 46);
-            this.sellerNameInfoBox.Name = "sellerNameInfoBox";
-            this.sellerNameInfoBox.ReadOnly = true;
-            this.sellerNameInfoBox.Size = new System.Drawing.Size(603, 46);
-            this.sellerNameInfoBox.TabIndex = 7;
-            this.sellerNameInfoBox.Text = "Test";
-            // 
-            // sellerAddressInfoBox
-            // 
-            this.sellerAddressInfoBox.BackColor = System.Drawing.Color.Honeydew;
-            this.sellerAddressInfoBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.sellerAddressInfoBox.Cursor = System.Windows.Forms.Cursors.Default;
-            this.sellerAddressInfoBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.sellerAddressInfoBox.Location = new System.Drawing.Point(41, 102);
-            this.sellerAddressInfoBox.Name = "sellerAddressInfoBox";
-            this.sellerAddressInfoBox.ReadOnly = true;
-            this.sellerAddressInfoBox.Size = new System.Drawing.Size(484, 28);
-            this.sellerAddressInfoBox.TabIndex = 8;
-            this.sellerAddressInfoBox.Text = "Default";
-            // 
-            // sellerZIPCityInfoBox
-            // 
-            this.sellerZIPCityInfoBox.BackColor = System.Drawing.Color.Honeydew;
-            this.sellerZIPCityInfoBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.sellerZIPCityInfoBox.Cursor = System.Windows.Forms.Cursors.Default;
-            this.sellerZIPCityInfoBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.sellerZIPCityInfoBox.Location = new System.Drawing.Point(41, 143);
-            this.sellerZIPCityInfoBox.Name = "sellerZIPCityInfoBox";
-            this.sellerZIPCityInfoBox.ReadOnly = true;
-            this.sellerZIPCityInfoBox.Size = new System.Drawing.Size(484, 28);
-            this.sellerZIPCityInfoBox.TabIndex = 9;
-            this.sellerZIPCityInfoBox.Text = "Default";
-            // 
-            // sellerPhoneInfoBox
-            // 
-            this.sellerPhoneInfoBox.BackColor = System.Drawing.Color.Honeydew;
-            this.sellerPhoneInfoBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.sellerPhoneInfoBox.Cursor = System.Windows.Forms.Cursors.Default;
-            this.sellerPhoneInfoBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.sellerPhoneInfoBox.Location = new System.Drawing.Point(41, 183);
-            this.sellerPhoneInfoBox.Name = "sellerPhoneInfoBox";
-            this.sellerPhoneInfoBox.ReadOnly = true;
-            this.sellerPhoneInfoBox.Size = new System.Drawing.Size(484, 28);
-            this.sellerPhoneInfoBox.TabIndex = 10;
-            this.sellerPhoneInfoBox.Text = "Default";
-            // 
-            // sellerEmailInfoBox
-            // 
-            this.sellerEmailInfoBox.BackColor = System.Drawing.Color.Honeydew;
-            this.sellerEmailInfoBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.sellerEmailInfoBox.Cursor = System.Windows.Forms.Cursors.Default;
-            this.sellerEmailInfoBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.sellerEmailInfoBox.Location = new System.Drawing.Point(41, 229);
-            this.sellerEmailInfoBox.Name = "sellerEmailInfoBox";
-            this.sellerEmailInfoBox.ReadOnly = true;
-            this.sellerEmailInfoBox.Size = new System.Drawing.Size(484, 28);
-            this.sellerEmailInfoBox.TabIndex = 11;
-            this.sellerEmailInfoBox.Text = "Default";
-            // 
-            // saveSellerInfoBtn
-            // 
-            this.saveSellerInfoBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.saveSellerInfoBtn.Location = new System.Drawing.Point(647, 220);
-            this.saveSellerInfoBtn.Name = "saveSellerInfoBtn";
-            this.saveSellerInfoBtn.Size = new System.Drawing.Size(125, 34);
-            this.saveSellerInfoBtn.TabIndex = 12;
-            this.saveSellerInfoBtn.Text = "Gem";
-            this.saveSellerInfoBtn.UseVisualStyleBackColor = true;
-            this.saveSellerInfoBtn.Visible = false;
-            this.saveSellerInfoBtn.Click += new System.EventHandler(this.saveSellerInfoBtn_Click);
-            // 
-            // cancelSellerInfoBtn
-            // 
-            this.cancelSellerInfoBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cancelSellerInfoBtn.Location = new System.Drawing.Point(816, 220);
-            this.cancelSellerInfoBtn.Name = "cancelSellerInfoBtn";
-            this.cancelSellerInfoBtn.Size = new System.Drawing.Size(125, 34);
-            this.cancelSellerInfoBtn.TabIndex = 13;
-            this.cancelSellerInfoBtn.Text = "Annuller";
-            this.cancelSellerInfoBtn.UseVisualStyleBackColor = true;
-            this.cancelSellerInfoBtn.Visible = false;
-            this.cancelSellerInfoBtn.Click += new System.EventHandler(this.cancelSellerInfoBtn_Click);
-            // 
-            // sellerTagInfoLabel
-            // 
-            this.sellerTagInfoLabel.AutoSize = true;
-            this.sellerTagInfoLabel.Location = new System.Drawing.Point(33, 46);
-            this.sellerTagInfoLabel.Name = "sellerTagInfoLabel";
-            this.sellerTagInfoLabel.Size = new System.Drawing.Size(130, 46);
-            this.sellerTagInfoLabel.TabIndex = 14;
-            this.sellerTagInfoLabel.Text = "0000#";
-            // 
             // Refashion_Main_UI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -563,13 +544,13 @@
         private System.Windows.Forms.ListView sellerListView;
         private System.Windows.Forms.ComboBox userListSearchBox;
         private System.Windows.Forms.Button newSellerBtn;
-        private System.Windows.Forms.Label sellerFirstNameLabel;
+        private System.Windows.Forms.Label sellerNameLabel;
         private System.Windows.Forms.Label sellerAddressLabel;
         private System.Windows.Forms.Label sellerZipLabel;
         private System.Windows.Forms.Label sellerPhoneLabel;
         private System.Windows.Forms.Label sellerCityLabel;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
-        private System.Windows.Forms.TextBox sellerFirstNameTextBox;
+        private System.Windows.Forms.TextBox sellerNameTextBox;
         private System.Windows.Forms.TextBox sellerAddressTextBox;
         private System.Windows.Forms.TextBox sellerCityTextBox;
         private System.Windows.Forms.TextBox sellerZIPTextBox;
@@ -577,8 +558,6 @@
         private System.Windows.Forms.Button saveNewSellerBtn;
         private System.Windows.Forms.ColumnHeader SellerTag;
         private System.Windows.Forms.ColumnHeader SellerName;
-        private System.Windows.Forms.TextBox sellerLastNameTextBox;
-        private System.Windows.Forms.Label sellerLastNameLabel;
         private System.Windows.Forms.GroupBox newSellerGroupBox;
         private System.Windows.Forms.TabControl tabPage;
         private System.Windows.Forms.TabPage sellerTab;
