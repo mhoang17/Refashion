@@ -1,0 +1,9 @@
+C:\Users\Maria\Source\Repos\Refashion\Refashion\bin\Debug\net472\Refashion.exe.config
+C:\Users\Maria\Source\Repos\Refashion\Refashion\bin\Debug\net472\Refashion.exe
+C:\Users\Maria\Source\Repos\Refashion\Refashion\bin\Debug\net472\Refashion.pdb
+C:\Users\Maria\Source\Repos\Refashion\Refashion\obj\Debug\net472\Refashion.csprojAssemblyReference.cache
+C:\Users\Maria\Source\Repos\Refashion\Refashion\obj\Debug\net472\Refashion.AssemblyInfoInputs.cache
+C:\Users\Maria\Source\Repos\Refashion\Refashion\obj\Debug\net472\Refashion.AssemblyInfo.cs
+C:\Users\Maria\Source\Repos\Refashion\Refashion\obj\Debug\net472\Refashion.csproj.CoreCompileInputs.cache
+C:\Users\Maria\Source\Repos\Refashion\Refashion\obj\Debug\net472\Refashion.exe
+C:\Users\Maria\Source\Repos\Refashion\Refashion\obj\Debug\net472\Refashion.pdb
