@@ -2,7 +2,6 @@ C:\Users\Maria\source\repos\Refashion\Refashion UI\bin\Debug\Refashion UI.exe.co
 C:\Users\Maria\source\repos\Refashion\Refashion UI\bin\Debug\Refashion UI.exe
 C:\Users\Maria\source\repos\Refashion\Refashion UI\bin\Debug\Refashion UI.pdb
 C:\Users\Maria\source\repos\Refashion\Refashion UI\obj\Debug\Refashion UI.csprojAssemblyReference.cache
-C:\Users\Maria\source\repos\Refashion\Refashion UI\obj\Debug\Refashion_UI.Form1.resources
 C:\Users\Maria\source\repos\Refashion\Refashion UI\obj\Debug\Refashion_UI.Properties.Resources.resources
 C:\Users\Maria\source\repos\Refashion\Refashion UI\obj\Debug\Refashion UI.csproj.GenerateResource.cache
 C:\Users\Maria\source\repos\Refashion\Refashion UI\obj\Debug\Refashion UI.csproj.CoreCompileInputs.cache
@@ -12,3 +11,4 @@ C:\Users\Maria\Source\Repos\Refashion\Refashion UI\bin\Debug\Refashion.exe
 C:\Users\Maria\Source\Repos\Refashion\Refashion UI\bin\Debug\Refashion.pdb
 C:\Users\Maria\Source\Repos\Refashion\Refashion UI\bin\Debug\Refashion.exe.config
 C:\Users\Maria\Source\Repos\Refashion\Refashion UI\obj\Debug\Refashion UI.csproj.CopyComplete
+C:\Users\Maria\Source\Repos\Refashion\Refashion UI\obj\Debug\Refashion_UI.Refashion_Main_UI.resources
