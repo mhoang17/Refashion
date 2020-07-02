@@ -54,6 +54,7 @@
             this.sellerTab = new System.Windows.Forms.TabPage();
             this.sellerSeparator = new System.Windows.Forms.Label();
             this.sellerInformationGroupBox = new System.Windows.Forms.GroupBox();
+            this.deleteSellerBtn = new System.Windows.Forms.Button();
             this.sellerInformation = new System.Windows.Forms.GroupBox();
             this.sellerTagInfoLabel = new System.Windows.Forms.Label();
             this.cancelSellerInfoBtn = new System.Windows.Forms.Button();
@@ -69,6 +70,7 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.tabIcons = new System.Windows.Forms.ImageList(this.components);
+            this.button1 = new System.Windows.Forms.Button();
             this.newSellerGroupBox.SuspendLayout();
             this.tabPage.SuspendLayout();
             this.sellerTab.SuspendLayout();
@@ -330,6 +332,7 @@
             // 
             // sellerInformationGroupBox
             // 
+            this.sellerInformationGroupBox.Controls.Add(this.deleteSellerBtn);
             this.sellerInformationGroupBox.Controls.Add(this.sellerInformation);
             this.sellerInformationGroupBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.sellerInformationGroupBox.Location = new System.Drawing.Point(443, 155);
@@ -339,6 +342,20 @@
             this.sellerInformationGroupBox.TabStop = false;
             this.sellerInformationGroupBox.Text = "Sælger Informationer";
             this.sellerInformationGroupBox.Visible = false;
+            // 
+            // deleteSellerBtn
+            // 
+            this.deleteSellerBtn.BackColor = System.Drawing.Color.White;
+            this.deleteSellerBtn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.deleteSellerBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.deleteSellerBtn.ForeColor = System.Drawing.Color.Red;
+            this.deleteSellerBtn.Location = new System.Drawing.Point(941, 666);
+            this.deleteSellerBtn.Name = "deleteSellerBtn";
+            this.deleteSellerBtn.Size = new System.Drawing.Size(125, 34);
+            this.deleteSellerBtn.TabIndex = 15;
+            this.deleteSellerBtn.Text = "Slet Bruger";
+            this.deleteSellerBtn.UseVisualStyleBackColor = false;
+            this.deleteSellerBtn.Click += new System.EventHandler(this.deleteSellerBtn_Click);
             // 
             // sellerInformation
             // 
@@ -518,11 +535,21 @@
             this.tabIcons.TransparentColor = System.Drawing.Color.Transparent;
             this.tabIcons.Images.SetKeyName(0, "SellerIcon.png");
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(0, 0);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 20;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            // 
             // Refashion_Main_UI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1684, 1075);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.tabPage);
             this.Name = "Refashion_Main_UI";
             this.Text = "Form1";
@@ -580,6 +607,8 @@
         private System.Windows.Forms.Button cancelSellerInfoBtn;
         private System.Windows.Forms.Button saveSellerInfoBtn;
         private System.Windows.Forms.Label sellerTagInfoLabel;
+        private System.Windows.Forms.Button deleteSellerBtn;
+        private System.Windows.Forms.Button button1;
     }
 }
 

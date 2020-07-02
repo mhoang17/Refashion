@@ -414,5 +414,56 @@ namespace Refashion_UI
 
             }
         }
+
+        private void deleteSellerBtn_Click(object sender, EventArgs e)
+        {
+            string message = "Vil du gerne slette denne sælger? Du kan ikke fortryde senere.";
+            string caption = "Slet Sælger?";
+
+            MessageBoxButtons buttons = MessageBoxButtons.YesNo;
+            DialogResult result;
+            
+            result = MessageBox.Show(message, caption, buttons);
+
+            if (result == DialogResult.Yes)
+            {
+                int sellerTag = tagDecreaser(sellerTagInfoLabel.Text);
+                Seller chosenSeller = null;
+
+                foreach (Seller seller in sellers)
+                {
+                    if (seller.Tag == sellerTag)
+                    {
+                        // TODO: This should happen in the database
+                        chosenSeller = seller;
+                    }
+
+                }
+
+                // If it should happen that the loop doesn't find the correct seller, then stop executing method
+                if (chosenSeller == null)
+                    return;
+
+                sellers.Remove(chosenSeller);
+
+                // Make the textboxes non-editable
+                sellerNameInfoBox.ReadOnly = true;
+                sellerAddressInfoBox.ReadOnly = true;
+                sellerZIPCityInfoBox.ReadOnly = true;
+                sellerPhoneInfoBox.ReadOnly = true;
+                sellerEmailInfoBox.ReadOnly = true;
+
+                // Change the buttons
+                editSellerInfoBtn.Visible = true;
+                saveSellerInfoBtn.Visible = false;
+                cancelSellerInfoBtn.Visible = false;
+
+                // Change the UI
+                sellerInformationGroupBox.Visible = false;
+                sellerListView.SelectedItems[0].Remove();
+
+            }
+                
+        }
     }
 }
