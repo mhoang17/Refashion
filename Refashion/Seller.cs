@@ -60,7 +60,40 @@ namespace Refashion
         public int PhoneNumber { get { return phoneNumber; } set { phoneNumber = value; } }
         public DateTime JoinDate { get { return joinDate; } set { joinDate = value; } }
 
+        public override string ToString()
+        {
+            string tagString = tagExtender();
+            
+            return tagString + " " + name;
+        }
 
+        // TODO: The tag extender should maybe only be in this class
+        private string tagExtender()
+        {
+            int tagLength = 4;
+            string sellerTagString = tag.ToString();
+
+
+            // Check if it has the correct length
+            if (sellerTagString.Length < tagLength)
+            {
+
+                int count = sellerTagString.Length;
+                string placeholder = "";
+
+                while (count < tagLength)
+                {
+                    placeholder += "0";
+                    count++;
+                }
+
+                sellerTagString = placeholder + sellerTagString;
+            }
+
+            sellerTagString += "#";
+
+            return sellerTagString;
+        }
 
     }
 }

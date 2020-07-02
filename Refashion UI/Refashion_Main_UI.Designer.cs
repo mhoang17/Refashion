@@ -31,9 +31,6 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Refashion_Main_UI));
             this.sellerListView = new System.Windows.Forms.ListView();
-            this.SellerTag = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.SellerName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.userListSearchBox = new System.Windows.Forms.ComboBox();
             this.newSellerBtn = new System.Windows.Forms.Button();
             this.sellerNameLabel = new System.Windows.Forms.Label();
             this.sellerAddressLabel = new System.Windows.Forms.Label();
@@ -52,6 +49,7 @@
             this.sellerEmailTextBox = new System.Windows.Forms.TextBox();
             this.tabPage = new System.Windows.Forms.TabControl();
             this.sellerTab = new System.Windows.Forms.TabPage();
+            this.sellerListSearchBar = new System.Windows.Forms.TextBox();
             this.sellerSeparator = new System.Windows.Forms.Label();
             this.sellerInformationGroupBox = new System.Windows.Forms.GroupBox();
             this.deleteSellerBtn = new System.Windows.Forms.Button();
@@ -70,7 +68,6 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.tabPage3 = new System.Windows.Forms.TabPage();
             this.tabIcons = new System.Windows.Forms.ImageList(this.components);
-            this.button1 = new System.Windows.Forms.Button();
             this.newSellerGroupBox.SuspendLayout();
             this.tabPage.SuspendLayout();
             this.sellerTab.SuspendLayout();
@@ -80,41 +77,21 @@
             // 
             // sellerListView
             // 
-            this.sellerListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.SellerTag,
-            this.SellerName});
+            this.sellerListView.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.sellerListView.FullRowSelect = true;
             this.sellerListView.HideSelection = false;
-            this.sellerListView.Location = new System.Drawing.Point(53, 155);
+            this.sellerListView.Location = new System.Drawing.Point(53, 212);
             this.sellerListView.Name = "sellerListView";
-            this.sellerListView.Size = new System.Drawing.Size(330, 700);
+            this.sellerListView.Size = new System.Drawing.Size(330, 647);
             this.sellerListView.TabIndex = 0;
             this.sellerListView.UseCompatibleStateImageBehavior = false;
-            this.sellerListView.View = System.Windows.Forms.View.Details;
+            this.sellerListView.View = System.Windows.Forms.View.Tile;
             this.sellerListView.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.sellerListView_ItemSelectionChanged);
-            // 
-            // SellerTag
-            // 
-            this.SellerTag.Text = "Tag";
-            this.SellerTag.Width = 100;
-            // 
-            // SellerName
-            // 
-            this.SellerName.Text = "Name";
-            this.SellerName.Width = 180;
-            // 
-            // userListSearchBox
-            // 
-            this.userListSearchBox.FormattingEnabled = true;
-            this.userListSearchBox.ItemHeight = 20;
-            this.userListSearchBox.Location = new System.Drawing.Point(53, 155);
-            this.userListSearchBox.Name = "userListSearchBox";
-            this.userListSearchBox.Size = new System.Drawing.Size(330, 28);
-            this.userListSearchBox.TabIndex = 1;
             // 
             // newSellerBtn
             // 
             this.newSellerBtn.BackColor = System.Drawing.Color.LightGreen;
+            this.newSellerBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.newSellerBtn.Location = new System.Drawing.Point(53, 852);
             this.newSellerBtn.Name = "newSellerBtn";
             this.newSellerBtn.Size = new System.Drawing.Size(330, 49);
@@ -306,12 +283,12 @@
             // 
             // sellerTab
             // 
+            this.sellerTab.Controls.Add(this.sellerListSearchBar);
             this.sellerTab.Controls.Add(this.sellerSeparator);
             this.sellerTab.Controls.Add(this.sellerInformationGroupBox);
             this.sellerTab.Controls.Add(this.newSellerGroupBox);
             this.sellerTab.Controls.Add(this.sellerTabPage);
             this.sellerTab.Controls.Add(this.newSellerBtn);
-            this.sellerTab.Controls.Add(this.userListSearchBox);
             this.sellerTab.Controls.Add(this.sellerListView);
             this.sellerTab.Cursor = System.Windows.Forms.Cursors.Default;
             this.sellerTab.ImageIndex = 0;
@@ -321,6 +298,19 @@
             this.sellerTab.Size = new System.Drawing.Size(1562, 944);
             this.sellerTab.TabIndex = 0;
             this.sellerTab.UseVisualStyleBackColor = true;
+            // 
+            // sellerListSearchBar
+            // 
+            this.sellerListSearchBar.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            this.sellerListSearchBar.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
+            this.sellerListSearchBar.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.sellerListSearchBar.Location = new System.Drawing.Point(53, 176);
+            this.sellerListSearchBar.Name = "sellerListSearchBar";
+            this.sellerListSearchBar.Size = new System.Drawing.Size(330, 30);
+            this.sellerListSearchBar.TabIndex = 20;
+            this.sellerListSearchBar.Text = "Søg...";
+            this.sellerListSearchBar.Click += new System.EventHandler(this.sellerListSearchBar_Click);
+            this.sellerListSearchBar.KeyDown += new System.Windows.Forms.KeyEventHandler(this.sellerListSearchBar_KeyDown);
             // 
             // sellerSeparator
             // 
@@ -535,21 +525,11 @@
             this.tabIcons.TransparentColor = System.Drawing.Color.Transparent;
             this.tabIcons.Images.SetKeyName(0, "SellerIcon.png");
             // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(0, 0);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 20;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            // 
             // Refashion_Main_UI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1684, 1075);
-            this.Controls.Add(this.button1);
             this.Controls.Add(this.tabPage);
             this.Name = "Refashion_Main_UI";
             this.Text = "Form1";
@@ -569,7 +549,6 @@
         #endregion
 
         private System.Windows.Forms.ListView sellerListView;
-        private System.Windows.Forms.ComboBox userListSearchBox;
         private System.Windows.Forms.Button newSellerBtn;
         private System.Windows.Forms.Label sellerNameLabel;
         private System.Windows.Forms.Label sellerAddressLabel;
@@ -583,8 +562,6 @@
         private System.Windows.Forms.TextBox sellerZIPTextBox;
         private System.Windows.Forms.TextBox sellerPhoneTextBox;
         private System.Windows.Forms.Button saveNewSellerBtn;
-        private System.Windows.Forms.ColumnHeader SellerTag;
-        private System.Windows.Forms.ColumnHeader SellerName;
         private System.Windows.Forms.GroupBox newSellerGroupBox;
         private System.Windows.Forms.TabControl tabPage;
         private System.Windows.Forms.TabPage sellerTab;
@@ -608,7 +585,7 @@
         private System.Windows.Forms.Button saveSellerInfoBtn;
         private System.Windows.Forms.Label sellerTagInfoLabel;
         private System.Windows.Forms.Button deleteSellerBtn;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.TextBox sellerListSearchBar;
     }
 }
 

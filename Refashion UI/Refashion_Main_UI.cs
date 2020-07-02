@@ -19,6 +19,8 @@ namespace Refashion_UI
 
         // TODO: This list should be deleted, when we have access to the real database.
         private List<Seller> sellers = new List<Seller>();
+        private AutoCompleteStringCollection sellerNames = new AutoCompleteStringCollection();
+        private List<ListViewItem> sellerListViewItems = new List<ListViewItem>();
 
         public Refashion_Main_UI()
         {
@@ -145,11 +147,30 @@ namespace Refashion_UI
 
             // TODO: Delete this when we have the real database
             sellers.Add(newSeller);
+            sellerNames.Add(newSeller.ToString());
 
-            // Add the seller tag and name to the sellerlist in UI
-            ListViewItem sellerItem = new ListViewItem(tagExtender(newSeller.Tag));
-            sellerItem.SubItems.Add(name);
+            // Add the seller tag and name to the sellerlist in UI and the searchbar
+            sellerListSearchBar.AutoCompleteCustomSource = sellerNames;
+
+            string listItemString = newSeller.ToString();
+            ListViewItem sellerItem = new ListViewItem(listItemString);
+
+
+            // If a person has searched for something, the listview might be smaller, therefore we should reinsert the original contents into the view again 
+            if (sellerListView.Items.Count != sellerListViewItems.Count)
+            {
+                sellerListView.Items.Clear();
+                sellerListView.Items.AddRange(sellerListViewItems.ToArray());
+            }
+                
             sellerListView.Items.Add(sellerItem);
+
+            // Save the new listview
+            sellerListViewItems.Clear();
+            sellerListViewItems.AddRange(sellerListView.Items.Cast<ListViewItem>());
+
+            sellerListView.Items.Clear();
+            sellerListView.Items.AddRange(sellerListViewItems.ToArray());
 
             // Clear the textboxes
             sellerNameTextBox.Clear();
@@ -244,7 +265,7 @@ namespace Refashion_UI
         private int tagDecreaser(string sellerTagString) {
 
             // Removes #
-            string sellerTagPlaceholder = sellerTagString.Replace("#", string.Empty);
+            string sellerTagPlaceholder = sellerTagString.Substring(0,4);
 
             // Removes 0's if they lie in the front
             if (sellerTagPlaceholder[0].ToString() == "0")
@@ -387,6 +408,9 @@ namespace Refashion_UI
             {
                 if (seller.Tag == sellerTag)
                 {
+                    // Remove the old name of the seller from the autocomplete
+                    sellerNames.Remove(seller.ToString());
+
                     // Change the information locally
                     // TODO: This has to happen in the database
                     seller.Name = name;
@@ -395,9 +419,18 @@ namespace Refashion_UI
                     seller.ZIP = (int)Int64.Parse(zip);
                     seller.PhoneNumber = (int)Int64.Parse(phoneNumber);
 
-                    // Change the name in te sellers list
-                    sellerListView.SelectedItems[0].SubItems.RemoveAt(1);
-                    sellerListView.SelectedItems[0].SubItems.Add(seller.Name);
+                    // Change the name in te sellers list and search-autocomplete
+                    sellerNames.Add(seller.ToString());
+                    sellerListSearchBar.AutoCompleteCustomSource = sellerNames;
+
+                    int sellerItemIdx = sellerListViewItems.IndexOf(sellerListView.SelectedItems[0]);
+                    sellerListViewItems[sellerItemIdx].Text = seller.ToString();
+
+                    sellerListView.SelectedItems[0].Text = seller.ToString();
+
+                    sellerListView.Items.Clear();
+                    sellerListView.Items.AddRange(sellerListViewItems.ToArray());
+                    sellerListSearchBar.Text = "Søg...";
 
                     // Make the textboxes non-editable
                     sellerNameInfoBox.ReadOnly = true;
@@ -445,6 +478,7 @@ namespace Refashion_UI
                     return;
 
                 sellers.Remove(chosenSeller);
+                sellerNames.Remove(chosenSeller.ToString());
 
                 // Make the textboxes non-editable
                 sellerNameInfoBox.ReadOnly = true;
@@ -460,10 +494,51 @@ namespace Refashion_UI
 
                 // Change the UI
                 sellerInformationGroupBox.Visible = false;
+
+                sellerListViewItems.Remove(sellerListView.SelectedItems[0]);
                 sellerListView.SelectedItems[0].Remove();
 
+                sellerListView.Items.Clear();
+                sellerListView.Items.AddRange(sellerListViewItems.ToArray());
+
+                // Reset the searchbar text to default
+                sellerListSearchBar.Text = "Søg...";
             }
                 
         }
+
+        private void sellerListSearchBar_Click(object sender, EventArgs e)
+        {
+            // TODO: There might need a check so the text only disappears when "Søg..." is in the textfield
+            sellerListSearchBar.Text = "";
+        }
+
+        private void sellerListSearchBar_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyData == Keys.Enter)
+            {
+                // If nothing stands in the searchbar then the original listview
+                if(string.IsNullOrEmpty(sellerListSearchBar.Text))
+                {
+                    sellerListView.Items.Clear();
+                    sellerListView.Items.AddRange(sellerListViewItems.ToArray());
+                    sellerListSearchBar.Text = "Søg...";
+                    e.SuppressKeyPress = true;
+                    return;
+                }
+
+                // Find those entries that matches
+                // TODO: Make it not case sensitive
+                var list = sellerListViewItems.Cast<ListViewItem>()
+                                   .Where(x => x.SubItems
+                                                .Cast<ListViewItem.ListViewSubItem>()
+                                                .Any(y => y.Text.Contains(sellerListSearchBar.Text)))
+                                   .ToArray();
+
+                sellerListView.Items.Clear();
+                sellerListView.Items.AddRange(list);
+            }
+        }
+
     }
 }

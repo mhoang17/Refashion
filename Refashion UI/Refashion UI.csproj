@@ -66,6 +66,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -75,6 +76,8 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Scripts\jquery-3.5.1.min.map" />
+    <None Include="Scripts\jquery-3.5.1.slim.min.map" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -84,6 +87,13 @@
       <Project>{251c9ad9-9651-48dc-8458-42f6fa0fbdda}</Project>
       <Name>Refashion</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Scripts\jquery-3.5.1.intellisense.js" />
+    <Content Include="Scripts\jquery-3.5.1.js" />
+    <Content Include="Scripts\jquery-3.5.1.min.js" />
+    <Content Include="Scripts\jquery-3.5.1.slim.js" />
+    <Content Include="Scripts\jquery-3.5.1.slim.min.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
