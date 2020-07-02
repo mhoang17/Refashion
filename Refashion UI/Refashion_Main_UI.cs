@@ -171,6 +171,8 @@ namespace Refashion_UI
 
         }
 
+
+        // Change the information displayed when seller is clicked
         private void sellerListView_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
             try
@@ -385,11 +387,17 @@ namespace Refashion_UI
             {
                 if (seller.Tag == sellerTag)
                 {
+                    // Change the information locally
+                    // TODO: This has to happen in the database
                     seller.Name = name;
                     seller.Address = address;
                     seller.City = city;
                     seller.ZIP = (int)Int64.Parse(zip);
                     seller.PhoneNumber = (int)Int64.Parse(phoneNumber);
+
+                    // Change the name in te sellers list
+                    sellerListView.SelectedItems[0].SubItems.RemoveAt(1);
+                    sellerListView.SelectedItems[0].SubItems.Add(seller.Name);
 
                     // Make the textboxes non-editable
                     sellerNameInfoBox.ReadOnly = true;
