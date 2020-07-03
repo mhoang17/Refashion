@@ -390,7 +390,7 @@
             // saveSellerInfoBtn
             // 
             this.saveSellerInfoBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.saveSellerInfoBtn.Location = new System.Drawing.Point(524, 214);
+            this.saveSellerInfoBtn.Location = new System.Drawing.Point(524, 248);
             this.saveSellerInfoBtn.Name = "saveSellerInfoBtn";
             this.saveSellerInfoBtn.Size = new System.Drawing.Size(125, 34);
             this.saveSellerInfoBtn.TabIndex = 12;

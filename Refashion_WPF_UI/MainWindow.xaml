@@ -1,0 +1,78 @@
+﻿<Window x:Class="Refashion_WPF_UI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Refashion_WPF_UI"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="510.11" Width="817.487">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="38*"/>
+            <RowDefinition Height="69*"/>
+            <RowDefinition Height="374*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="67*"/>
+            <ColumnDefinition Width="197*"/>
+            <ColumnDefinition Width="546*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid x:Name="newSellerPanel" Grid.Column="2" HorizontalAlignment="Left" Height="261" Margin="18,16.333,0,0" Grid.Row="2" VerticalAlignment="Top" Width="497" Background="#FFEFF7DD" Visibility="Collapsed">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="102*"/>
+                <ColumnDefinition Width="395*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="47*"/>
+                <RowDefinition Height="214*"/>
+            </Grid.RowDefinitions>
+            <Label x:Name="newSellerPanelLabel" Content="Opret ny sælger" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="20,10,0,0" FontSize="15" FontWeight="Bold" FontFamily="Microsoft YaHei" Width="477" Grid.ColumnSpan="2" Height="30"/>
+            <Label x:Name="sellerNameLabel" Content="Navn:" HorizontalAlignment="Left" VerticalAlignment="Top" HorizontalContentAlignment="Right" Margin="31,15.667,0,0" Grid.Row="1" FontFamily="Microsoft YaHei" Width="64" FontSize="11" Height="25"/>
+            <Label x:Name="sellerEmailLabel" Content="E-mail:" HorizontalAlignment="Left" VerticalAlignment="Top" HorizontalContentAlignment="Right" Margin="31,39.667,0,0" Grid.Row="1" FontFamily="Microsoft YaHei" Width="64" FontSize="11" Height="25"/>
+            <Label x:Name="sellerAddressLabel" Content="Adresse:" HorizontalAlignment="Left" VerticalAlignment="Top" HorizontalContentAlignment="Right" Margin="31,65.667,0,0" Grid.Row="1" FontFamily="Microsoft YaHei" Width="63" FontSize="11" Height="25"/>
+            <Label x:Name="sellerZipLabel" Content="Post nr.:" HorizontalAlignment="Left" VerticalAlignment="Top" HorizontalContentAlignment="Right" Margin="31,89.667,0,0" Grid.Row="1" FontFamily="Microsoft YaHei" Width="64" FontSize="11" Height="25"/>
+            <Label x:Name="sellerPhoneLabel" Content="Telefon:" HorizontalAlignment="Left" VerticalAlignment="Top" HorizontalContentAlignment="Right" Margin="31,115.667,0,0" Grid.Row="1" FontFamily="Microsoft YaHei" Width="64" FontSize="11" Height="25"/>
+            <Label x:Name="sellerCityLabel" Content="By:" HorizontalAlignment="Left" VerticalAlignment="Top" HorizontalContentAlignment="Right" Grid.Column="1" Margin="72,92.667,0,0" Grid.Row="1" FontFamily="Microsoft YaHei" Width="64" FontSize="11" Height="25"/>
+            <TextBox x:Name="sellerEmailTextBox" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="10,45.667,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="327" KeyDown="sellerEmailTextBox_KeyDown" TabIndex="2"/>
+            <TextBox x:Name="sellerAddressTextBox" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="10,69.667,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="327" KeyDown="sellerAddressTextBox_KeyDown" TabIndex="3"/>
+            <TextBox x:Name="sellerNameTextBox" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="10,19.667,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="327" KeyDown="sellerNameTextBox_KeyDown" TabIndex="1"/>
+            <TextBox x:Name="sellerZIPTextBox" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="10,95.667,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="91" KeyDown="sellerZIPTextBox_KeyDown" TabIndex="4"/>
+            <TextBox x:Name="sellerCityTextBox" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="141,95.667,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="196" KeyDown="sellerCityTextBox_KeyDown" TabIndex="5"/>
+            <TextBox x:Name="sellerPhoneTextBox" Grid.Column="1" HorizontalAlignment="Left" Height="23" Margin="10,121.667,0,0" Grid.Row="1" TextWrapping="Wrap" VerticalAlignment="Top" Width="327" KeyDown="sellerPhoneTextBox_KeyDown" TabIndex="6"/>
+            <Button x:Name="saveNewSellerBtn" Content="Gem" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Grid.Column="1" Margin="262,161.667,0,0" Grid.Row="1" Height="21" Click="saveNewSellerBtn_Click" TabIndex="7"/>
+        </Grid>
+
+        <ListView x:Name="sellerListView" HorizontalAlignment="Left" Height="288" VerticalAlignment="Top" Width="162" Margin="15.333,39.333,0,0" Grid.Row="2" Grid.Column="1" SelectionChanged="sellerListView_SelectionChanged">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <TextBox x:Name="sellerListSearchBar" HorizontalAlignment="Left" Height="23" Margin="15.333,16.333,0,0" TextWrapping="Wrap" Text="Søg..." VerticalAlignment="Top" Width="162" Grid.Row="2" Grid.Column="1"/>
+        <Button x:Name="newSellerBtn" Content="Ny sælger" HorizontalAlignment="Left" Margin="15.333,327.333,0,0" VerticalAlignment="Top" Width="162" Height="21" Grid.Row="2" Grid.Column="1" Click="newSellerBtn_Click"/>
+        <Label x:Name="sellerTabPage" Content="Sælger Oversigt" HorizontalAlignment="Left" Margin="15.333,16,0,0" VerticalAlignment="Top" Width="265" FontWeight="Bold" FontSize="25" Grid.ColumnSpan="2" Height="43" Grid.Column="1" Grid.Row="1"/>
+        <Label x:Name="sellerSeparator" Content="" Grid.Column="1" HorizontalAlignment="Left" Margin="15.333,59,0,0" VerticalAlignment="Top" Background="#FF9B9B9B" Width="697" Height="3" Grid.ColumnSpan="2" Grid.Row="1"/>
+        <Grid x:Name="sellerInformationPanel" Grid.Column="2" HorizontalAlignment="Left" Height="332" Margin="18,16.333,0,0" Grid.Row="2" VerticalAlignment="Top" Width="497" Visibility="Collapsed">
+            <Grid x:Name="sellerInformation" HorizontalAlignment="Left" Height="165" VerticalAlignment="Top" Width="497" Background="#FFEFF7DD">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="208*"/>
+                    <ColumnDefinition Width="289*"/>
+                </Grid.ColumnDefinitions>
+                <Label x:Name="sellerTagInfoLabel" Content="0000#" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="35" Width="66" FontSize="17"/>
+                <Label x:Name="sellerJoinDateInfoBox" Content="Oprettelse: 00/00-0000" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top" Width="198" Grid.Column="1"/>
+                <Button x:Name="editSellerInfoBtn" Content="Ændr Info" Grid.Column="1" HorizontalAlignment="Left" Margin="10,113,0,0" VerticalAlignment="Top" Width="75" Click="editSellerInfoBtn_Click"/>
+                <TextBox x:Name="sellerNameInfoBox" HorizontalAlignment="Left" Height="23" Margin="81,14,0,0" TextWrapping="Wrap" Text="First Name Last Name" VerticalAlignment="Top" Width="406" Grid.ColumnSpan="2" FontSize="17" Background="{x:Null}" BorderBrush="{x:Null}" IsReadOnly="True" KeyDown="sellerNameInfoBox_KeyDown"/>
+                <TextBox x:Name="sellerAddressInfoBox" HorizontalAlignment="Left" Height="23" Margin="10,45,0,0" TextWrapping="Wrap" Text="Address" VerticalAlignment="Top" Width="198" BorderBrush="{x:Null}" Background="{x:Null}" IsReadOnly="True" KeyDown="sellerAddressInfoBox_KeyDown"/>
+                <TextBox x:Name="sellerZIPCityInfoBox" HorizontalAlignment="Left" Height="23" Margin="10,68,0,0" TextWrapping="Wrap" Text="ZIP City" VerticalAlignment="Top" Width="198" BorderBrush="{x:Null}" Background="{x:Null}" IsReadOnly="True" KeyDown="sellerZIPCityInfoBox_KeyDown"/>
+                <TextBox x:Name="sellerPhoneInfoBox" HorizontalAlignment="Left" Height="23" Margin="10,91,0,0" TextWrapping="Wrap" Text="Phone" VerticalAlignment="Top" Width="198" BorderBrush="{x:Null}" Background="{x:Null}" IsReadOnly="True" KeyDown="sellerPhoneInfoBox_KeyDown"/>
+                <TextBox x:Name="sellerEmailInfoBox" HorizontalAlignment="Left" Height="23" Margin="10,114,0,0" TextWrapping="Wrap" Text="E-mail" VerticalAlignment="Top" Width="198" BorderBrush="{x:Null}" Background="{x:Null}" IsReadOnly="True" KeyDown="sellerEmailInfoBox_KeyDown"/>
+                <Button x:Name="saveSellerInfoBtn" Content="Gem" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Grid.Column="1" Margin="11,113,0,0" Click="saveSellerInfoBtn_Click" Visibility="Collapsed"/>
+                <Button x:Name="cancelSellerInfoBtn" Content="Annuller" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Grid.Column="1" Margin="123,113,0,0" Click="cancelSellerInfoBtn_Click" Visibility="Hidden"/>
+            </Grid>
+            <Button x:Name="deleteSellerBtn" Content="Slet Sælger" HorizontalAlignment="Left" Margin="422,311,0,0" VerticalAlignment="Top" Width="75" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="Red" Click="deleteSellerBtn_Click"/>
+        </Grid>
+
+    </Grid>
+</Window>
