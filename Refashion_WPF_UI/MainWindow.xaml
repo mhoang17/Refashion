@@ -50,7 +50,7 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        <TextBox x:Name="sellerListSearchBar" HorizontalAlignment="Left" Height="23" Margin="15.333,16.333,0,0" TextWrapping="Wrap" Text="Søg..." VerticalAlignment="Top" Width="162" Grid.Row="2" Grid.Column="1"/>
+        <TextBox x:Name="sellerListSearchBar" HorizontalAlignment="Left" Height="23" Margin="15.333,16.333,0,0" TextWrapping="Wrap" Text="Søg..." VerticalAlignment="Top" Width="162" Grid.Row="2" Grid.Column="1" PreviewMouseLeftButtonDown="sellerListSearchBar_PreviewMouseLeftButtonDown" KeyDown="sellerListSearchBar_KeyDown"/>
         <Button x:Name="newSellerBtn" Content="Ny sælger" HorizontalAlignment="Left" Margin="15.333,327.333,0,0" VerticalAlignment="Top" Width="162" Height="21" Grid.Row="2" Grid.Column="1" Click="newSellerBtn_Click"/>
         <Label x:Name="sellerTabPage" Content="Sælger Oversigt" HorizontalAlignment="Left" Margin="15.333,16,0,0" VerticalAlignment="Top" Width="265" FontWeight="Bold" FontSize="25" Grid.ColumnSpan="2" Height="43" Grid.Column="1" Grid.Row="1"/>
         <Label x:Name="sellerSeparator" Content="" Grid.Column="1" HorizontalAlignment="Left" Margin="15.333,59,0,0" VerticalAlignment="Top" Background="#FF9B9B9B" Width="697" Height="3" Grid.ColumnSpan="2" Grid.Row="1"/>

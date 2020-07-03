@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -70,14 +71,14 @@ namespace Refashion_WPF_UI
         // TODO: Numberinput from numpad most likely doesn't work with this code
         private void sellerZIPTextBox_KeyDown(object sender, KeyEventArgs e)
         {
-            // If what's written is not a number, don't show anything
+            // If what's written is not a number, don't show anything. If tab has been pressed, then act like tab.
             if ((e.Key >= Key.D0 && e.Key <= Key.D9) || e.Key == Key.Tab)
                 e.Handled = false;
             else
                 e.Handled = true;
 
-            // Don't show more than 4 digits
-            if (sellerZIPTextBox.Text.Count() >= 4)
+            // Don't write more than 4 digits
+            if (sellerZIPTextBox.Text.Count() >= 4 && e.Key != Key.Tab)
             {
                 e.Handled = true;
             }
@@ -138,7 +139,7 @@ namespace Refashion_WPF_UI
                 return;
 
             // Create a seller
-            Seller newSeller = new Seller(sellerTags, name, email, address, city, (int)Int64.Parse(zip), (int)Int64.Parse(phoneNumber));
+            Seller newSeller = new Seller(sellerTags, name, email, address, city, int.Parse(zip), int.Parse(phoneNumber));
 
             // Add the new seller to the local list
             sellers.Add(newSeller);
@@ -180,13 +181,12 @@ namespace Refashion_WPF_UI
             {
                 if (sellerListView.Items.Count > 0)
                 {
-                    // Removes #
                     int sellerTag = tagDecreaser(sellerListView.SelectedItems[0].ToString());
 
                     // TODO: This will most likely be changed when the database is setup
                     foreach (Seller seller in sellers)
                     {
-                        // TODO: This gives ArgumentOutOfRangeException even though it can go into the if statement. Needs to be checked
+                        // TODO: This can give ArgumentOutOfRangeException even though it can go into the if statement. Needs to be checked
                         if (seller.Tag == sellerTag)
                         {
                             string sellerTagString = tagExtender(seller.Tag);
@@ -201,6 +201,11 @@ namespace Refashion_WPF_UI
                             sellerPhoneInfoBox.Text = seller.PhoneNumber.ToString();
                             sellerJoinDateInfoBox.Content = "Oprettelse: " + seller.JoinDate.ToString("dd/MM-yyyy");
                             sellerInformationPanel.Visibility = Visibility.Visible;
+
+                            // If it so happens that a seller was being edited, then hide the edit buttons and make it non-editable
+                            finishEditingSeller();
+
+                            return;
                         }
 
                     }
@@ -212,7 +217,7 @@ namespace Refashion_WPF_UI
             }
         }
 
-        // Put 0's infront of the tag number
+        // This method extends the tag to have the format 0000# instead of just being an int
         private string tagExtender(int sellerTag)
         {
             int tagLength = 4;
@@ -241,19 +246,23 @@ namespace Refashion_WPF_UI
         }
         private int tagDecreaser(string sellerTagString)
         {
-            // Removes #
-            string sellerTagPlaceholder = sellerTagString.Substring(0, 4);
+            // Tag length (since a tag is always in the format 0000# we know the first 4 characters are numbers.
+            int tagLength = 4;
 
-            // Removes 0's if they lie in the front
+            // Removes #
+            string sellerTagPlaceholder = sellerTagString.Substring(0, tagLength);
+
+            // Removes 0's if they lie in the front (eg. 0044 becomes 44)
             if (sellerTagPlaceholder[0].ToString() == "0")
             {
                 while (sellerTagPlaceholder[0].ToString() == "0")
                 {
-                    sellerTagPlaceholder = sellerTagPlaceholder.Remove(0, 1);
+                    // Remove the first character
+                    sellerTagPlaceholder = sellerTagPlaceholder.Remove(0,1);
                 }
             }
 
-            return (int)Int64.Parse(sellerTagPlaceholder);
+            return int.Parse(sellerTagPlaceholder);
         }
         private void editSellerInfoBtn_Click(object sender, RoutedEventArgs e)
         {
@@ -275,6 +284,7 @@ namespace Refashion_WPF_UI
         {
             int sellerTag = tagDecreaser(sellerTagInfoLabel.Content.ToString());
 
+            // Look for the specific seller and reset the UI to be that seller's values
             foreach (Seller seller in sellers)
             {
                 if (seller.Tag == sellerTag)
@@ -287,6 +297,8 @@ namespace Refashion_WPF_UI
                     sellerPhoneInfoBox.Text = seller.PhoneNumber.ToString();
 
                     finishEditingSeller();
+
+                    return;
                 }
 
             }
@@ -332,6 +344,8 @@ namespace Refashion_WPF_UI
         }
         private void saveSellerEdit()
         {
+            // Since a ZIP-address string is structured as "0000 city" we know that
+            // the city name will start at the 5th index (aka the 6th character including the space)
             int zipLength = 4;
             int cityStartIdx = 5;
 
@@ -362,18 +376,20 @@ namespace Refashion_WPF_UI
                     // Change the information locally
                     // TODO: This has to happen in the database
                     seller.Name = name;
+                    seller.Email = email;
                     seller.Address = address;
                     seller.City = city;
-                    seller.ZIP = (int)Int64.Parse(zip);
-                    seller.PhoneNumber = (int)Int64.Parse(phoneNumber);
+                    seller.ZIP = int.Parse(zip);
+                    seller.PhoneNumber = int.Parse(phoneNumber);
 
-                    // Change the name in the sellers list both backend and frontend
+                    // Change the name in the sellerListView both backend and frontend
                     int sellerItemIdx = sellerListViewItems.IndexOf(sellerListView.SelectedItems[0].ToString());
                     sellerListViewItems[sellerItemIdx] = seller.ToString();
 
                     sellerListView.SelectedItems[0] = seller.ToString();
 
                     // If the user has made a search then reset the seller list to the original
+                    // TODO: Discuss if this reset is needed
                     sellerListView.Items.Clear();
                     foreach (var item in sellerListViewItems)
                     {
@@ -386,13 +402,15 @@ namespace Refashion_WPF_UI
                     sellerListSearchBar.Text = "Søg...";
 
                     finishEditingSeller();
+
+                    return;
                 }
 
             }
         }
         private void finishEditingSeller()
         {
-            // Make the textboxes non-editable
+            // Make the infoboxes of the seller non-editable
             sellerNameInfoBox.IsReadOnly = true;
             sellerAddressInfoBox.IsReadOnly = true;
             sellerZIPCityInfoBox.IsReadOnly = true;
@@ -427,14 +445,15 @@ namespace Refashion_WPF_UI
                     {
                         // TODO: This should happen in the database
                         chosenSeller = seller;
+                        break;
                     }
-
                 }
 
                 // If it should happen that the loop doesn't find the correct seller, then stop executing method
                 if (chosenSeller == null)
                     return;
 
+                // If it so happens that a seller was being edited, then hide the edit buttons and make it non-editable
                 finishEditingSeller();
 
                 // Change the UI
@@ -458,6 +477,44 @@ namespace Refashion_WPF_UI
         }
 
 
+
+
+        // Methods for the seller searchbar
+        private void sellerListSearchBar_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            // TODO: There might need a check so the text only disappears when "Søg..." is in the textfield
+            sellerListSearchBar.Text = "";
+        }
+
+        private void sellerListSearchBar_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                // If nothing stands in the searchbar then the original listview
+                if (string.IsNullOrEmpty(sellerListSearchBar.Text))
+                {
+                    sellerListView.Items.Clear();
+                    foreach (var item in sellerListViewItems)
+                    {
+                        sellerListView.Items.Add(item);
+                    }
+                    sellerListSearchBar.Text = "Søg...";
+                    return;
+                }
+
+                // Find those entries that matches
+                sellerListView.Items.Clear();
+                foreach (string item in sellerListViewItems)
+                {
+                    if(item.IndexOf(sellerListSearchBar.Text, StringComparison.OrdinalIgnoreCase) >= 0)
+                        sellerListView.Items.Add(item);
+                }
+            }
+        }
+
+
+
+        
 
 
     }
