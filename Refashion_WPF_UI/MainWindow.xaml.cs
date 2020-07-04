@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -26,7 +27,6 @@ namespace Refashion_WPF_UI
         //TODO: this variable is a placeholder and should be deleted
         private int sellerTags = 1;
 
-        // TODO: This list should be deleted, when we have access to the real database.
         private List<Seller> sellers;
         private List<string> sellerListViewItems;
 
@@ -166,6 +166,10 @@ namespace Refashion_WPF_UI
             sellerZIPTextBox.Clear();
             sellerPhoneTextBox.Clear();
 
+            // Focus on the namebox
+            // TODO: discuss of the newly added seller should be the thing that is being shown
+            sellerNameTextBox.Focus();
+
             // TODO: delete this when seller has gotten a proper tag
             sellerTags += 1;
         }
@@ -181,7 +185,7 @@ namespace Refashion_WPF_UI
             {
                 if (sellerListView.Items.Count > 0)
                 {
-                    int sellerTag = tagDecreaser(sellerListView.SelectedItems[0].ToString());
+                    int sellerTag = tagDecreaser(sellerListView.SelectedItem.ToString());
 
                     // TODO: This will most likely be changed when the database is setup
                     foreach (Seller seller in sellers)
@@ -202,7 +206,7 @@ namespace Refashion_WPF_UI
                             sellerJoinDateInfoBox.Content = "Oprettelse: " + seller.JoinDate.ToString("dd/MM-yyyy");
                             sellerInformationPanel.Visibility = Visibility.Visible;
 
-                            // If it so happens that a seller was being edited, then hide the edit buttons and make it non-editable
+                            // If it so happens that a seller was being edited when the selection was made, then hide the edit buttons and make it non-editable
                             finishEditingSeller();
 
                             return;
@@ -373,6 +377,8 @@ namespace Refashion_WPF_UI
             {
                 if (seller.Tag == sellerTag)
                 {
+                    string oldSellerString = seller.ToString();
+                    
                     // Change the information locally
                     // TODO: This has to happen in the database
                     seller.Name = name;
@@ -383,13 +389,10 @@ namespace Refashion_WPF_UI
                     seller.PhoneNumber = int.Parse(phoneNumber);
 
                     // Change the name in the sellerListView both backend and frontend
-                    int sellerItemIdx = sellerListViewItems.IndexOf(sellerListView.SelectedItems[0].ToString());
+                    int sellerItemIdx = sellerListViewItems.IndexOf(oldSellerString);
                     sellerListViewItems[sellerItemIdx] = seller.ToString();
 
-                    sellerListView.SelectedItems[0] = seller.ToString();
-
-                    // If the user has made a search then reset the seller list to the original
-                    // TODO: Discuss if this reset is needed
+                    // TODO: Talk if this reset is needed
                     sellerListView.Items.Clear();
                     foreach (var item in sellerListViewItems)
                     {
@@ -485,37 +488,44 @@ namespace Refashion_WPF_UI
             // TODO: There might need a check so the text only disappears when "Søg..." is in the textfield
             sellerListSearchBar.Text = "";
         }
-
-        private void sellerListSearchBar_KeyDown(object sender, KeyEventArgs e)
+        private void sellerListSearchBar_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (e.Key == Key.Enter)
+            if (string.IsNullOrEmpty(sellerListSearchBar.Text))
             {
-                // If nothing stands in the searchbar then the original listview
-                if (string.IsNullOrEmpty(sellerListSearchBar.Text))
-                {
-                    sellerListView.Items.Clear();
-                    foreach (var item in sellerListViewItems)
-                    {
-                        sellerListView.Items.Add(item);
-                    }
-                    sellerListSearchBar.Text = "Søg...";
-                    return;
-                }
+                sellerListSearchBar.Text = "Søg...";
+            }
+        }
+        
+        // TODO: Dicuss if the autocomplete is necessary. If yes, then this method needs to be optimized if there's many sellers
+        private void sellerListSearchBar_KeyUp(object sender, KeyEventArgs e)
+        {
+            object focusedSellerItem = sellerListView.SelectedItem;
 
+            // If nothing stands in the searchbar then show the full list of sellers
+            if (string.IsNullOrEmpty(sellerListSearchBar.Text))
+            {
+                sellerListView.Items.Clear();
+                foreach (var item in sellerListViewItems)
+                {
+                    sellerListView.Items.Add(item);
+                }
+            }
+            else
+            {
                 // Find those entries that matches
                 sellerListView.Items.Clear();
                 foreach (string item in sellerListViewItems)
                 {
-                    if(item.IndexOf(sellerListSearchBar.Text, StringComparison.OrdinalIgnoreCase) >= 0)
+                    if (item.IndexOf(sellerListSearchBar.Text, StringComparison.OrdinalIgnoreCase) >= 0)
                         sellerListView.Items.Add(item);
                 }
             }
+
+            // If a seller had already been chosen, then reselect it on the sellerList
+            if (focusedSellerItem != null)
+            {
+                sellerListView.SelectedItem = focusedSellerItem.ToString();
+            }
         }
-
-
-
-        
-
-
     }
 }
