@@ -15,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Globalization;
 using Refashion;
 
 namespace Refashion_WPF_UI
@@ -44,27 +45,35 @@ namespace Refashion_WPF_UI
         {
             newSellerPanel.Visibility = Visibility.Visible;
             sellerInformationPanel.Visibility = Visibility.Collapsed;
+
+            // Clear warnings
+            newSellerMissingInfoWarningLabel.Visibility = Visibility.Collapsed;
+            newSellerZIPWarningLabel.Visibility = Visibility.Collapsed;
+
+            sellerInfoMissingInfoWarningLabel.Visibility = Visibility.Collapsed;
+            sellerInfoZIPWarningLabel.Visibility = Visibility.Collapsed;
+
             sellerListView.SelectedItems.Clear();
         }
         private void sellerNameTextBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
-                saveSellerInformation(e);
+                saveSellerInformation();
             }
         }
         private void sellerEmailTextBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
-                saveSellerInformation(e);
+                saveSellerInformation();
             }
         }
         private void sellerAddressTextBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
-                saveSellerInformation(e);
+                saveSellerInformation();
             }
         }
 
@@ -85,14 +94,14 @@ namespace Refashion_WPF_UI
 
             if (e.Key == Key.Enter)
             {
-                saveSellerInformation(e);
+                saveSellerInformation();
             }
         }
         private void sellerCityTextBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
-                saveSellerInformation(e);
+                saveSellerInformation();
             }
         }
 
@@ -107,16 +116,16 @@ namespace Refashion_WPF_UI
 
             if (e.Key == Key.Enter)
             {
-                saveSellerInformation(e);
+                saveSellerInformation();
             }
         }
         private void saveNewSellerBtn_Click(object sender, RoutedEventArgs e)
         {
-            saveSellerInformation(e);
+            saveSellerInformation();
         }
 
         // The method that saves the seller
-        private void saveSellerInformation(EventArgs e)
+        private void saveSellerInformation()
         {
 
             // Initialize variables to those the user has written in the client
@@ -128,18 +137,17 @@ namespace Refashion_WPF_UI
             string zip = sellerZIPTextBox.Text;
             string phoneNumber = sellerPhoneTextBox.Text;
 
-            // Check if all information has been filled
-            // TODO: Give proper response to that information is missing
-            if (string.IsNullOrEmpty(name) ||
-                string.IsNullOrEmpty(email) ||
-                string.IsNullOrEmpty(address) ||
-                string.IsNullOrEmpty(city) ||
-                string.IsNullOrEmpty(zip) || zip.Length != 4 ||
-                string.IsNullOrEmpty(phoneNumber))
+            if (triggerInformationWarnings(name, email, address, city, zip, phoneNumber))
                 return;
 
+            // This make every first letter in a word uppercase
+            // TODO: discuss if this is necessary to have
+            name = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(name);
+            address = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(address);
+            city = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(city);
+
             // Create a seller
-            Seller newSeller = new Seller(sellerTags, name, email, address, city, int.Parse(zip), int.Parse(phoneNumber));
+            Seller newSeller = new Seller(sellerTags, name, email, address, city, int.Parse(zip), phoneNumber);
 
             // Add the new seller to the local list
             sellers.Add(newSeller);
@@ -174,16 +182,14 @@ namespace Refashion_WPF_UI
             sellerTags += 1;
         }
 
-
-
-
-
+        
+        
         // These methods is used when an exisiting seller has been selected and is being edited (including deletion)
         private void sellerListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             try
             {
-                if (sellerListView.Items.Count > 0)
+                if (sellerListView.Items.Count > 0 && sellerListView.SelectedItem != null)
                 {
                     int sellerTag = tagDecreaser(sellerListView.SelectedItem.ToString());
 
@@ -193,7 +199,7 @@ namespace Refashion_WPF_UI
                         // TODO: This can give ArgumentOutOfRangeException even though it can go into the if statement. Needs to be checked
                         if (seller.Tag == sellerTag)
                         {
-                            string sellerTagString = tagExtender(seller.Tag);
+                            string sellerTagString = seller.tagExtender();
 
                             // Display seller information
                             newSellerPanel.Visibility = Visibility.Collapsed;
@@ -201,7 +207,8 @@ namespace Refashion_WPF_UI
                             sellerNameInfoBox.Text = seller.Name;
                             sellerEmailInfoBox.Text = seller.Email;
                             sellerAddressInfoBox.Text = seller.Address;
-                            sellerZIPCityInfoBox.Text = seller.ZIP + " " + seller.City;
+                            sellerZIPInfoBox.Text = seller.ZIP.ToString();
+                            sellerCityInfoBox.Text = seller.City;
                             sellerPhoneInfoBox.Text = seller.PhoneNumber.ToString();
                             sellerJoinDateInfoBox.Content = "Oprettelse: " + seller.JoinDate.ToString("dd/MM-yyyy");
                             sellerInformationPanel.Visibility = Visibility.Visible;
@@ -219,34 +226,6 @@ namespace Refashion_WPF_UI
             {
                 Console.WriteLine(ex.StackTrace);
             }
-        }
-
-        // This method extends the tag to have the format 0000# instead of just being an int
-        private string tagExtender(int sellerTag)
-        {
-            int tagLength = 4;
-            string sellerTagString = sellerTag.ToString();
-
-
-            // Check if it has the correct length
-            if (sellerTagString.Length < tagLength)
-            {
-
-                int count = sellerTagString.Length;
-                string placeholder = "";
-
-                while (count < tagLength)
-                {
-                    placeholder += "0";
-                    count++;
-                }
-
-                sellerTagString = placeholder + sellerTagString;
-            }
-
-            sellerTagString += "#";
-
-            return sellerTagString;
         }
         private int tagDecreaser(string sellerTagString)
         {
@@ -273,7 +252,8 @@ namespace Refashion_WPF_UI
             // Make the textboxes editable
             sellerNameInfoBox.IsReadOnly = false;
             sellerAddressInfoBox.IsReadOnly = false;
-            sellerZIPCityInfoBox.IsReadOnly = false;
+            sellerZIPInfoBox.IsReadOnly = false;
+            sellerCityInfoBox.IsReadOnly = false;
             sellerPhoneInfoBox.IsReadOnly = false;
             sellerEmailInfoBox.IsReadOnly = false;
 
@@ -297,7 +277,8 @@ namespace Refashion_WPF_UI
                     sellerNameInfoBox.Text = seller.Name;
                     sellerEmailInfoBox.Text = seller.Email;
                     sellerAddressInfoBox.Text = seller.Address;
-                    sellerZIPCityInfoBox.Text = seller.ZIP + " " + seller.City;
+                    sellerZIPInfoBox.Text = seller.ZIP.ToString();
+                    sellerCityInfoBox.Text = seller.City;
                     sellerPhoneInfoBox.Text = seller.PhoneNumber.ToString();
 
                     finishEditingSeller();
@@ -325,7 +306,26 @@ namespace Refashion_WPF_UI
                 saveSellerEdit();
             }
         }
-        private void sellerZIPCityInfoBox_KeyDown(object sender, KeyEventArgs e)
+        private void sellerZIPInfoBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            // If what's written is not a number, don't show anything. If tab has been pressed, then act like tab.
+            if ((e.Key >= Key.D0 && e.Key <= Key.D9) || e.Key == Key.Tab)
+                e.Handled = false;
+            else
+                e.Handled = true;
+
+            // Don't write more than 4 digits
+            if (sellerZIPTextBox.Text.Count() >= 4 && e.Key != Key.Tab)
+            {
+                e.Handled = true;
+            }
+
+            if (e.Key == Key.Enter)
+            {
+                saveSellerEdit();
+            }
+        }
+        private void sellerCityInfoBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
@@ -348,26 +348,14 @@ namespace Refashion_WPF_UI
         }
         private void saveSellerEdit()
         {
-            // Since a ZIP-address string is structured as "0000 city" we know that
-            // the city name will start at the 5th index (aka the 6th character including the space)
-            int zipLength = 4;
-            int cityStartIdx = 5;
-
             string name = sellerNameInfoBox.Text;
             string email = sellerEmailInfoBox.Text;
             string address = sellerAddressInfoBox.Text;
-            string zip = sellerZIPCityInfoBox.Text.Substring(0, zipLength);
-            string city = sellerZIPCityInfoBox.Text.Substring(cityStartIdx, sellerZIPCityInfoBox.Text.Length - cityStartIdx);
+            string zip = sellerZIPInfoBox.Text;
+            string city = sellerCityInfoBox.Text;
             string phoneNumber = sellerPhoneInfoBox.Text;
 
-            // Check if all information has been filled
-            // TODO: Give proper response to that information is missing
-            if (string.IsNullOrEmpty(name) ||
-                string.IsNullOrEmpty(email) ||
-                string.IsNullOrEmpty(address) ||
-                string.IsNullOrEmpty(city) ||
-                string.IsNullOrEmpty(zip) || zip.Length != 4 ||
-                string.IsNullOrEmpty(phoneNumber))
+            if (triggerInformationWarnings(name, email, address, city, zip, phoneNumber))
                 return;
 
             int sellerTag = tagDecreaser(sellerTagInfoLabel.Content.ToString());
@@ -378,7 +366,13 @@ namespace Refashion_WPF_UI
                 if (seller.Tag == sellerTag)
                 {
                     string oldSellerString = seller.ToString();
-                    
+
+                    // This make every first letter in a word uppercase
+                    // TODO: discuss if this is necessary to have
+                    name = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(name);
+                    address = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(address);
+                    city = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(city);
+
                     // Change the information locally
                     // TODO: This has to happen in the database
                     seller.Name = name;
@@ -386,7 +380,7 @@ namespace Refashion_WPF_UI
                     seller.Address = address;
                     seller.City = city;
                     seller.ZIP = int.Parse(zip);
-                    seller.PhoneNumber = int.Parse(phoneNumber);
+                    seller.PhoneNumber = phoneNumber;
 
                     // Change the name in the sellerListView both backend and frontend
                     int sellerItemIdx = sellerListViewItems.IndexOf(oldSellerString);
@@ -416,7 +410,8 @@ namespace Refashion_WPF_UI
             // Make the infoboxes of the seller non-editable
             sellerNameInfoBox.IsReadOnly = true;
             sellerAddressInfoBox.IsReadOnly = true;
-            sellerZIPCityInfoBox.IsReadOnly = true;
+            sellerZIPInfoBox.IsReadOnly = true;
+            sellerCityInfoBox.IsReadOnly = true;
             sellerPhoneInfoBox.IsReadOnly = true;
             sellerEmailInfoBox.IsReadOnly = true;
 
@@ -424,11 +419,55 @@ namespace Refashion_WPF_UI
             editSellerInfoBtn.Visibility = Visibility.Visible;
             saveSellerInfoBtn.Visibility = Visibility.Collapsed;
             cancelSellerInfoBtn.Visibility = Visibility.Collapsed;
+
+            // Collapse warnings
+            newSellerMissingInfoWarningLabel.Visibility = Visibility.Collapsed;
+            newSellerZIPWarningLabel.Visibility = Visibility.Collapsed;
+
+            sellerInfoMissingInfoWarningLabel.Visibility = Visibility.Collapsed;
+            sellerInfoZIPWarningLabel.Visibility = Visibility.Collapsed;
         }
 
 
+        private Boolean triggerInformationWarnings(string name, string email, string address, string city, string zip, string phoneNumber)
+        {
+            // Check if all information has been filled
+            if (string.IsNullOrEmpty(name) ||
+                string.IsNullOrEmpty(email) ||
+                string.IsNullOrEmpty(address) ||
+                string.IsNullOrEmpty(city) ||
+                string.IsNullOrEmpty(zip) ||
+                string.IsNullOrEmpty(phoneNumber))
+            {
+                newSellerMissingInfoWarningLabel.Visibility = Visibility.Visible;
+                newSellerZIPWarningLabel.Visibility = Visibility.Collapsed;
 
+                sellerInfoMissingInfoWarningLabel.Visibility = Visibility.Visible;
+                sellerInfoZIPWarningLabel.Visibility = Visibility.Collapsed;
+                return true;
+            }
 
+            else if (zip.Length != 4)
+            {
+                newSellerMissingInfoWarningLabel.Visibility = Visibility.Collapsed;
+                newSellerZIPWarningLabel.Visibility = Visibility.Visible;
+
+                sellerInfoMissingInfoWarningLabel.Visibility = Visibility.Collapsed;
+                sellerInfoZIPWarningLabel.Visibility = Visibility.Visible;
+                return true;
+            }
+
+            newSellerMissingInfoWarningLabel.Visibility = Visibility.Collapsed;
+            newSellerZIPWarningLabel.Visibility = Visibility.Collapsed;
+
+            sellerInfoMissingInfoWarningLabel.Visibility = Visibility.Collapsed;
+            sellerInfoZIPWarningLabel.Visibility = Visibility.Collapsed;
+
+            return false;
+        }
+
+        
+        
         // Delete the user from backend and frontend
         private void deleteSellerBtn_Click(object sender, RoutedEventArgs e)
         {
@@ -527,5 +566,7 @@ namespace Refashion_WPF_UI
                 sellerListView.SelectedItem = focusedSellerItem.ToString();
             }
         }
+
+        
     }
 }
