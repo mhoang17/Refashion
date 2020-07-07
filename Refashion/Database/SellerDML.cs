@@ -70,14 +70,14 @@ namespace Refashion.Database
                 StringBuilder queryBuilder = new StringBuilder(query);
 
                 Dictionary<string, string> conditionDictionary = ParseConditionsToDictionary(conditions);
-                queryBuilder.Append(CreateConditionParameters(conditionDictionary));
+                queryBuilder.Append(CreateEqualsParameters(conditionDictionary));
 
                 // Return only a single row
                 queryBuilder.Append(" LIMIT 1");
 
                 command = new MySqlCommand(queryBuilder.ToString(), con);
                 conditionDictionary = ParseConditionsToDictionary(conditions);
-                AddConditionParameters(conditionDictionary);
+                AddEqualsParameters(conditionDictionary);
 
                 Console.WriteLine(command.CommandText);
 
@@ -114,12 +114,12 @@ namespace Refashion.Database
                 StringBuilder queryBuilder = new StringBuilder(query);
 
                 Dictionary<string, string> conditionDictionary = ParseConditionsToDictionary(conditions);
-                queryBuilder.Append(CreateConditionParameters(conditionDictionary));
+                queryBuilder.Append(CreateLikeParameters(conditionDictionary));
 
                 command = new MySqlCommand(queryBuilder.ToString(), con);
 
                 conditionDictionary = ParseConditionsToDictionary(conditions);
-                AddConditionParameters(conditionDictionary);
+                AddLikeParameters(conditionDictionary);
 
                 Console.WriteLine(command.CommandText);
 
@@ -168,7 +168,7 @@ namespace Refashion.Database
             return conditionDictionary;
         }
 
-        private string CreateConditionParameters(Dictionary<string, string> conditions)
+        private string CreateEqualsParameters(Dictionary<string, string> conditions)
         {
             StringBuilder queryBuilder = new StringBuilder();
 
@@ -192,12 +192,46 @@ namespace Refashion.Database
             return queryBuilder.ToString();
         }
 
-        private void AddConditionParameters(Dictionary<string, string> conditions)
+        private string CreateLikeParameters(Dictionary<string, string> conditions)
+        {
+            StringBuilder queryBuilder = new StringBuilder();
+
+            if (conditions.Count > 0)
+            {
+                KeyValuePair<string, string> firstCondition = conditions.First();
+
+                queryBuilder.Append(string.Format(" {0} Like @{0}", firstCondition.Key));
+
+                // Remove the condition just added so it is not included in following loop
+                conditions.Remove(firstCondition.Key);
+            }
+            if (conditions.Count > 0)
+            {
+                foreach (KeyValuePair<string, string> conditionPair in conditions)
+                {
+                    queryBuilder.Append(string.Format(" OR {0} LIKE @{0}", conditionPair.Key));
+                }
+            }
+
+            return queryBuilder.ToString();
+        }
+
+        private void AddEqualsParameters(Dictionary<string, string> conditions)
         {
             foreach (KeyValuePair<string, string> conditionPair in conditions)
             {
                 Console.WriteLine(conditionPair.Key + " : " + conditionPair.Value);
                 command.Parameters.AddWithValue(conditionPair.Key, conditionPair.Value);
+                //command.Parameters["@" + conditionPair.Key].Value = conditionPair.Value;
+            }
+        }
+
+        private void AddLikeParameters(Dictionary<string, string> conditions)
+        {
+            foreach (KeyValuePair<string, string> conditionPair in conditions)
+            {
+                Console.WriteLine(conditionPair.Key + " : " + conditionPair.Value);
+                command.Parameters.AddWithValue(conditionPair.Key, "%" + conditionPair.Value + "%");
                 //command.Parameters["@" + conditionPair.Key].Value = conditionPair.Value;
             }
         }
@@ -354,7 +388,7 @@ namespace Refashion.Database
                 }
 
                 queryBuilder.Append(string.Join(",", sellerRows));
-                queryBuilder.Append(" ON DUPLICATE KEY UPDATE " +
+                queryBuilder.Append(" ON DUPLICATE KEY UPDATE" +
                                     "name=VALUEs(name)," +
                                     "email=VALUES(email)," +
                                     "address=VALUES(address)," +
@@ -383,7 +417,7 @@ namespace Refashion.Database
         }
 
         // TODO: Consider implementing soft delete
-        public void Delete(Seller seller)
+        public void Delete_Single(Seller seller)
         {
             var con = new MySqlConnection(connectionString);
             try
