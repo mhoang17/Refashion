@@ -6,6 +6,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Refashion", "Refashion\Refa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Refashion_WPF_UI", "Refashion_WPF_UI\Refashion_WPF_UI.csproj", "{5CB462F0-899D-4E03-ABA5-70833E4B0029}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RefashionTest", "RefashionTest\RefashionTest.csproj", "{AC077A39-2088-490B-853B-42DE6C3AD5EE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,6 +22,10 @@ Global
 		{5CB462F0-899D-4E03-ABA5-70833E4B0029}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5CB462F0-899D-4E03-ABA5-70833E4B0029}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5CB462F0-899D-4E03-ABA5-70833E4B0029}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC077A39-2088-490B-853B-42DE6C3AD5EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC077A39-2088-490B-853B-42DE6C3AD5EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC077A39-2088-490B-853B-42DE6C3AD5EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC077A39-2088-490B-853B-42DE6C3AD5EE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

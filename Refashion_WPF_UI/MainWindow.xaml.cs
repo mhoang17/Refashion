@@ -17,6 +17,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Globalization;
 using Refashion;
+using Refashion.Database;
 
 namespace Refashion_WPF_UI
 {
@@ -30,12 +31,14 @@ namespace Refashion_WPF_UI
 
         private List<Seller> sellers;
         private List<string> sellerListViewItems;
+        private SellerDML sellerDML;
 
         public MainWindow()
         {
             InitializeComponent();
             sellers = new List<Seller>();
             sellerListViewItems = new List<string>();
+            sellerDML = new SellerDML();
         }
 
         // When the new seller button is clicked
@@ -148,6 +151,7 @@ namespace Refashion_WPF_UI
 
             // Create a seller
             Seller newSeller = new Seller(sellerTags, name, email, address, city, int.Parse(zip), phoneNumber);
+            sellerDML.Insert_Single(newSeller);
 
             // Add the new seller to the local list
             sellers.Add(newSeller);

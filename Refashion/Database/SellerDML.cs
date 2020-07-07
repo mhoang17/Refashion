@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Refashion.Database
 {
-    public class SellerDML
+    public class SellerDML : RefashionDML
     {
         private MySqlCommand command;
         private string connectionString = @"server=localhost;userid=devUser;password=devpass;database=refashion;Allow User Variables=True";
