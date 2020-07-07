@@ -348,3 +348,9 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+Refashion/obj/Debug/net472/Refashion.pdb
+Refashion/obj/Debug/net472/Refashion.exe
+Refashion/obj/Debug/net472/Refashion.csprojAssemblyReference.cache
+Refashion/bin/Debug/net472/Refashion.pdb
+Refashion/bin/Debug/net472/Refashion.exe
+.vs/Refashion/v16/.suo
