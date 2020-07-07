@@ -11,10 +11,12 @@ namespace Refashion.Database
     public class SellerDML : RefashionDML
     {
         private MySqlCommand command;
-        private string connectionString = @"server=localhost;userid=devUser;password=devpass;database=refashion;Allow User Variables=True";
+        private DatabaseConnection database;
         public SellerDML()
         {
-            MySqlConnection con = new MySqlConnection(connectionString);
+            database = new DatabaseConnection();
+
+            MySqlConnection con = database.GetConnection();
             con.Open();
 
             string stm = "SELECT VERSION()";
@@ -29,7 +31,7 @@ namespace Refashion.Database
         public List<Seller> GetAll()
         {
             List<Seller> sellers = new List<Seller>();
-            MySqlConnection con = new MySqlConnection(connectionString);
+            MySqlConnection con = database.GetConnection();
             try
             {
                 con.Open();
@@ -63,7 +65,7 @@ namespace Refashion.Database
         {
             // empty seller in case query returns nothing
             Seller seller = new Seller("","","","",0,"");
-            MySqlConnection con = new MySqlConnection(connectionString);
+            MySqlConnection con = database.GetConnection();
             try
             {
                 string query = "SELECT * FROM sellers WHERE";
@@ -107,7 +109,7 @@ namespace Refashion.Database
         public List<Seller> Select_Multiple(string conditions)
         {
             List<Seller> sellers = new List<Seller>();
-            MySqlConnection con = new MySqlConnection(connectionString);
+            MySqlConnection con = database.GetConnection();
             try
             {
                 string query = "SELECT * FROM sellers WHERE";
@@ -251,7 +253,7 @@ namespace Refashion.Database
 
         public void Insert_Single(Seller seller)
         {
-            var con = new MySqlConnection(connectionString);
+            var con = database.GetConnection();
             try
             {
                 con.Open();
@@ -287,7 +289,7 @@ namespace Refashion.Database
         // Take max_allowed_packet into account
         public void Insert_Multiple(List<Seller> sellers)
         {
-            var con = new MySqlConnection(connectionString);
+            var con = database.GetConnection();
             try
             {
                 string query = "INSERT INTO sellers (name, email, address, postnumber, city, phonenumber) VALUES ";
@@ -331,7 +333,7 @@ namespace Refashion.Database
 
         public void Update_Single(Seller seller)
         {
-            var con = new MySqlConnection(connectionString);
+            var con = database.GetConnection();
             try
             {
                 con.Open();
@@ -367,7 +369,7 @@ namespace Refashion.Database
 
         public void Update_Multiple(List<Seller> sellers)
         {
-            var con = new MySqlConnection(connectionString);
+            var con = database.GetConnection();
             try
             {
                 string query = "INSERT INTO sellers (id, name, email, address, postnumber, city, phonenumber) VALUES ";
@@ -419,7 +421,7 @@ namespace Refashion.Database
         // TODO: Consider implementing soft delete
         public void Delete_Single(Seller seller)
         {
-            var con = new MySqlConnection(connectionString);
+            var con = database.GetConnection();
             try
             {
                 con.Open();
@@ -448,7 +450,7 @@ namespace Refashion.Database
 
         public void Delete_Multiple(List<Seller> sellers)
         {
-            var con = new MySqlConnection(connectionString);
+            var con = database.GetConnection();
             try
             {
                 string query = "DELETE FROM sellers WHERE (id) IN " + "(";
