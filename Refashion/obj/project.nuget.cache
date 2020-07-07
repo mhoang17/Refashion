@@ -1,8 +1,20 @@
 {
   "version": 2,
-  "dgSpecHash": "PumB3gLyVlU9suY7pAtd8dRlsmbq/6TPTxT7x3siUEPhOasgFgZ1/gLQdiFDwtBreVeEAfnsMaW3PzNNE2/XaQ==",
+  "dgSpecHash": "G9KfXxAwWbfM2G841by1jNKbcD3pDY60XkFeG5lH5VzMNpqrBR2865LLFIaLoYeq4PMXfxtBbvxOfzGRRNfZnQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Maria\\Source\\Repos\\Refashion\\Refashion\\Refashion.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "C:\\Users\\jakob\\Refashion\\Refashion\\Refashion.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\jakob\\.nuget\\packages\\bouncycastle\\1.8.3.1\\bouncycastle.1.8.3.1.nupkg.sha512",
+    "C:\\Users\\jakob\\.nuget\\packages\\google.protobuf\\3.6.1\\google.protobuf.3.6.1.nupkg.sha512",
+    "C:\\Users\\jakob\\.nuget\\packages\\k4os.compression.lz4\\1.1.11\\k4os.compression.lz4.1.1.11.nupkg.sha512",
+    "C:\\Users\\jakob\\.nuget\\packages\\k4os.compression.lz4.streams\\1.1.11\\k4os.compression.lz4.streams.1.1.11.nupkg.sha512",
+    "C:\\Users\\jakob\\.nuget\\packages\\k4os.hash.xxhash\\1.0.6\\k4os.hash.xxhash.1.0.6.nupkg.sha512",
+    "C:\\Users\\jakob\\.nuget\\packages\\mysql.data\\8.0.20\\mysql.data.8.0.20.nupkg.sha512",
+    "C:\\Users\\jakob\\.nuget\\packages\\ssh.net\\2016.1.0\\ssh.net.2016.1.0.nupkg.sha512",
+    "C:\\Users\\jakob\\.nuget\\packages\\system.buffers\\4.5.0\\system.buffers.4.5.0.nupkg.sha512",
+    "C:\\Users\\jakob\\.nuget\\packages\\system.memory\\4.5.3\\system.memory.4.5.3.nupkg.sha512",
+    "C:\\Users\\jakob\\.nuget\\packages\\system.numerics.vectors\\4.4.0\\system.numerics.vectors.4.4.0.nupkg.sha512",
+    "C:\\Users\\jakob\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\4.6.0\\system.runtime.compilerservices.unsafe.4.6.0.nupkg.sha512"
+  ],
   "logs": []
 }
