@@ -10,8 +10,9 @@ namespace Refashion.Database
         public DatabaseConnection()
         {
             // Get "Test" connectionString from app.config or use fallback
-            connectionString = ConfigurationManager.ConnectionStrings["Test"].ConnectionString ?? 
-                @"server=localhost;userid=devUser;password=devpass;database=refashion;Allow User Variables=True";
+            connectionString = ConfigurationManager.ConnectionStrings["Test"] != null ? 
+                ConfigurationManager.ConnectionStrings["Test"].ConnectionString :
+                "server=localhost;userid=devUser;password=devpass;database=refashion;Allow User Variables=True";
         }
 
         public MySqlConnection GetConnection()
