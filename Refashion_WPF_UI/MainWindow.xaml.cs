@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -26,19 +27,21 @@ namespace Refashion_WPF_UI
     /// </summary>
     public partial class MainWindow : Window
     {
-        //TODO: this variable is a placeholder and should be deleted
-        private int sellerTags = 1;
-
-        private List<Seller> sellers;
-        private List<string> sellerListViewItems;
         private SellerDML sellerDML;
+        private List<Seller> sellers;
+
+        private TagManipulation tagManipulator;
 
         public MainWindow()
         {
             InitializeComponent();
-            sellers = new List<Seller>();
-            sellerListViewItems = new List<string>();
+
             sellerDML = new SellerDML();
+
+            sellers = sellerDML.GetAll();
+
+            sellerListView.ItemsSource = sellers;
+            tagManipulator = new TagManipulation();
         }
 
         // When the new seller button is clicked
@@ -56,7 +59,6 @@ namespace Refashion_WPF_UI
             sellerInfoMissingInfoWarningLabel.Visibility = Visibility.Collapsed;
             sellerInfoZIPWarningLabel.Visibility = Visibility.Collapsed;
 
-            sellerListView.SelectedItems.Clear();
         }
         private void sellerNameTextBox_KeyDown(object sender, KeyEventArgs e)
         {
@@ -144,31 +146,21 @@ namespace Refashion_WPF_UI
                 return;
 
             // This make every first letter in a word uppercase
-            // TODO: discuss if this is necessary to have
             name = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(name);
             address = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(address);
             city = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(city);
 
-            // Create a seller
-            Seller newSeller = new Seller(sellerTags, name, email, address, city, int.Parse(zip), phoneNumber);
+            // Create a seller and them into the database
+            Seller newSeller = new Seller(name, email, address, city, int.Parse(zip), phoneNumber);
             sellerDML.Insert_Single(newSeller);
+            newSeller = sellerDML.Select_Single("email:" + email);
 
             // Add the new seller to the local list
             sellers.Add(newSeller);
 
-            // Add the seller tag and name to the sellerlist in UI
-            sellerListView.Items.Add(newSeller.ToString());
-
-            // Save the new listview locally
-            sellerListViewItems.Clear();
-            sellerListViewItems.AddRange(sellerListView.Items.Cast<string>());
-
             // Show all sellers again
-            sellerListView.Items.Clear();
-            foreach (var item in sellerListViewItems)
-            {
-                sellerListView.Items.Add(item);
-            }
+            sellerListView.ClearValue(ItemsControl.ItemsSourceProperty);
+            sellerListView.ItemsSource = sellers;
 
             // Clear the textboxes
             sellerNameTextBox.Clear();
@@ -181,9 +173,6 @@ namespace Refashion_WPF_UI
             // Focus on the namebox
             // TODO: discuss of the newly added seller should be the thing that is being shown
             sellerNameTextBox.Focus();
-
-            // TODO: delete this when seller has gotten a proper tag
-            sellerTags += 1;
         }
 
         
@@ -195,61 +184,31 @@ namespace Refashion_WPF_UI
             {
                 if (sellerListView.Items.Count > 0 && sellerListView.SelectedItem != null)
                 {
-                    int sellerTag = tagDecreaser(sellerListView.SelectedItem.ToString());
+                    Console.WriteLine(sellerListView.SelectedItem.ToString());
+                    sellerInformation.DataContext = sellerListView.SelectedItem;
 
-                    // TODO: This will most likely be changed when the database is setup
-                    foreach (Seller seller in sellers)
-                    {
-                        // TODO: This can give ArgumentOutOfRangeException even though it can go into the if statement. Needs to be checked
-                        if (seller.Tag == sellerTag)
-                        {
-                            string sellerTagString = seller.tagExtender();
+                    int sellerTag = tagManipulator.sellerTagDecreaser(sellerListView.SelectedItem.ToString());
+                    Seller seller = (Seller) sellerListView.SelectedItem;
+                   
+                    string sellerTagString = seller.tagExtender();
 
-                            // Display seller information
-                            newSellerPanel.Visibility = Visibility.Collapsed;
-                            sellerTagInfoLabel.Content = sellerTagString;
-                            sellerNameInfoBox.Text = seller.Name;
-                            sellerEmailInfoBox.Text = seller.Email;
-                            sellerAddressInfoBox.Text = seller.Address;
-                            sellerZIPInfoBox.Text = seller.ZIP.ToString();
-                            sellerCityInfoBox.Text = seller.City;
-                            sellerPhoneInfoBox.Text = seller.PhoneNumber.ToString();
-                            sellerJoinDateInfoBox.Content = "Oprettelse: " + seller.JoinDate.ToString("dd/MM-yyyy");
-                            sellerInformationPanel.Visibility = Visibility.Visible;
+                    // Display seller information
+                    newSellerPanel.Visibility = Visibility.Collapsed;
+                    sellerTagInfoLabel.Content = sellerTagString;
+                    sellerJoinDateInfoBox.Content = "Oprettelse: " + seller.JoinDate.ToString("dd/MM-yyyy");
+                    sellerInformationPanel.Visibility = Visibility.Visible;
 
-                            // If it so happens that a seller was being edited when the selection was made, then hide the edit buttons and make it non-editable
-                            finishEditingSeller();
+                    // If it so happens that a seller was being edited when the selection was made, then hide the edit buttons and make it non-editable
+                    finishEditingSeller();
 
-                            return;
-                        }
-
-                    }
+                    return;
+                     
                 }
             }
             catch (ArgumentOutOfRangeException ex)
             {
                 Console.WriteLine(ex.StackTrace);
             }
-        }
-        private int tagDecreaser(string sellerTagString)
-        {
-            // Tag length (since a tag is always in the format 0000# we know the first 4 characters are numbers.
-            int tagLength = 4;
-
-            // Removes #
-            string sellerTagPlaceholder = sellerTagString.Substring(0, tagLength);
-
-            // Removes 0's if they lie in the front (eg. 0044 becomes 44)
-            if (sellerTagPlaceholder[0].ToString() == "0")
-            {
-                while (sellerTagPlaceholder[0].ToString() == "0")
-                {
-                    // Remove the first character
-                    sellerTagPlaceholder = sellerTagPlaceholder.Remove(0,1);
-                }
-            }
-
-            return int.Parse(sellerTagPlaceholder);
         }
         private void editSellerInfoBtn_Click(object sender, RoutedEventArgs e)
         {
@@ -270,27 +229,19 @@ namespace Refashion_WPF_UI
         }
         private void cancelSellerInfoBtn_Click(object sender, RoutedEventArgs e)
         {
-            int sellerTag = tagDecreaser(sellerTagInfoLabel.Content.ToString());
+            Seller seller = (Seller) sellerInformation.DataContext;
+            // Reset the UI to be that seller's values
 
-            // Look for the specific seller and reset the UI to be that seller's values
-            foreach (Seller seller in sellers)
-            {
-                if (seller.Tag == sellerTag)
-                {
-                    // Reset the information if they have been edited
-                    sellerNameInfoBox.Text = seller.Name;
-                    sellerEmailInfoBox.Text = seller.Email;
-                    sellerAddressInfoBox.Text = seller.Address;
-                    sellerZIPInfoBox.Text = seller.ZIP.ToString();
-                    sellerCityInfoBox.Text = seller.City;
-                    sellerPhoneInfoBox.Text = seller.PhoneNumber.ToString();
+            //Reset the information if they have been edited
+            sellerNameInfoBox.Text = seller.Name;
+            sellerEmailInfoBox.Text = seller.Email;
+            sellerAddressInfoBox.Text = seller.Address;
+            sellerZIPInfoBox.Text = seller.ZIP.ToString();
+            sellerCityInfoBox.Text = seller.City;
+            sellerPhoneInfoBox.Text = seller.PhoneNumber.ToString();
 
-                    finishEditingSeller();
+            finishEditingSeller();
 
-                    return;
-                }
-
-            }
         }
         private void saveSellerInfoBtn_Click(object sender, RoutedEventArgs e)
         {
@@ -362,52 +313,39 @@ namespace Refashion_WPF_UI
             if (triggerInformationWarnings(name, email, address, city, zip, phoneNumber))
                 return;
 
-            int sellerTag = tagDecreaser(sellerTagInfoLabel.Content.ToString());
-
             // TODO: This will most likely be changed when the database is setup
-            foreach (Seller seller in sellers)
-            {
-                if (seller.Tag == sellerTag)
-                {
-                    string oldSellerString = seller.ToString();
+            Seller seller = (Seller) sellerInformation.DataContext;
+            int sellerIdx = sellers.IndexOf(seller);
 
-                    // This make every first letter in a word uppercase
-                    // TODO: discuss if this is necessary to have
-                    name = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(name);
-                    address = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(address);
-                    city = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(city);
+            // This make every first letter in a word uppercase
+            // TODO: discuss if this is necessary to have
+            name = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(name);
+            address = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(address);
+            city = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(city);
 
-                    // Change the information locally
-                    // TODO: This has to happen in the database
-                    seller.Name = name;
-                    seller.Email = email;
-                    seller.Address = address;
-                    seller.City = city;
-                    seller.ZIP = int.Parse(zip);
-                    seller.PhoneNumber = phoneNumber;
+            // Change the information locally
+            seller.Name = name;
+            seller.Email = email;
+            seller.Address = address;
+            seller.City = city;
+            seller.ZIP = int.Parse(zip);
+            seller.PhoneNumber = phoneNumber;
+            sellerDML.Update_Single(seller);
 
-                    // Change the name in the sellerListView both backend and frontend
-                    int sellerItemIdx = sellerListViewItems.IndexOf(oldSellerString);
-                    sellerListViewItems[sellerItemIdx] = seller.ToString();
+            sellers[sellerIdx] = seller;
 
-                    // TODO: Talk if this reset is needed
-                    sellerListView.Items.Clear();
-                    foreach (var item in sellerListViewItems)
-                    {
-                        sellerListView.Items.Add(item);
-                    }
+            sellerListView.ClearValue(ItemsControl.ItemsSourceProperty);
+            sellerListView.ItemsSource = sellers;
 
-                    // Mark the selection again
-                    sellerListView.SelectedItem = seller.ToString();
+            // Mark the selection again
+            sellerListView.SelectedItem = seller;
 
-                    sellerListSearchBar.Text = "Søg...";
+            sellerListSearchBar.Text = "Søg...";
 
-                    finishEditingSeller();
+            finishEditingSeller();
 
-                    return;
-                }
-
-            }
+            return;
+            
         }
         private void finishEditingSeller()
         {
@@ -482,22 +420,7 @@ namespace Refashion_WPF_UI
 
             if (result == MessageBoxResult.Yes)
             {
-                int sellerTag = tagDecreaser(sellerTagInfoLabel.Content.ToString());
-                Seller chosenSeller = null;
-
-                foreach (Seller seller in sellers)
-                {
-                    if (seller.Tag == sellerTag)
-                    {
-                        // TODO: This should happen in the database
-                        chosenSeller = seller;
-                        break;
-                    }
-                }
-
-                // If it should happen that the loop doesn't find the correct seller, then stop executing method
-                if (chosenSeller == null)
-                    return;
+                Seller chosenSeller = (Seller) sellerInformation.DataContext;
 
                 // If it so happens that a seller was being edited, then hide the edit buttons and make it non-editable
                 finishEditingSeller();
@@ -507,15 +430,10 @@ namespace Refashion_WPF_UI
 
                 // Remove seller from the backend and frontend
                 sellers.Remove(chosenSeller);
+                sellerDML.Delete_Single(chosenSeller);
 
-                sellerListViewItems.Remove(sellerListView.SelectedItems[0].ToString());
-                sellerListView.SelectedItems.Remove(sellerListView.SelectedItems[0].ToString());
-
-                sellerListView.Items.Clear();
-                foreach (var item in sellerListViewItems)
-                {
-                    sellerListView.Items.Add(item);
-                }
+                sellerListView.ClearValue(ItemsControl.ItemsSourceProperty);
+                sellerListView.ItemsSource = sellers;
 
                 // Reset the searchbar text to default
                 sellerListSearchBar.Text = "Søg...";
@@ -529,7 +447,8 @@ namespace Refashion_WPF_UI
         private void sellerListSearchBar_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
             // TODO: There might need a check so the text only disappears when "Søg..." is in the textfield
-            sellerListSearchBar.Text = "";
+            if(sellerListSearchBar.Text.Equals("Søg..."))
+                sellerListSearchBar.Text = "";
         }
         private void sellerListSearchBar_LostFocus(object sender, RoutedEventArgs e)
         {
@@ -542,35 +461,39 @@ namespace Refashion_WPF_UI
         // TODO: Dicuss if the autocomplete is necessary. If yes, then this method needs to be optimized if there's many sellers
         private void sellerListSearchBar_KeyUp(object sender, KeyEventArgs e)
         {
-            object focusedSellerItem = sellerListView.SelectedItem;
+            Seller focusedSellerItem = (Seller) sellerListView.SelectedItem;
 
             // If nothing stands in the searchbar then show the full list of sellers
             if (string.IsNullOrEmpty(sellerListSearchBar.Text))
             {
-                sellerListView.Items.Clear();
-                foreach (var item in sellerListViewItems)
-                {
-                    sellerListView.Items.Add(item);
-                }
+                sellerListView.ClearValue(ItemsControl.ItemsSourceProperty);
+                sellerListView.ItemsSource = sellers;
             }
             else
             {
                 // Find those entries that matches
-                sellerListView.Items.Clear();
-                foreach (string item in sellerListViewItems)
+                sellerListView.ClearValue(ItemsControl.ItemsSourceProperty);
+                List<Seller> newSellerList = new List<Seller>();
+
+                foreach (Seller seller in sellers)
                 {
-                    if (item.IndexOf(sellerListSearchBar.Text, StringComparison.OrdinalIgnoreCase) >= 0)
-                        sellerListView.Items.Add(item);
+                    if (seller.ToString().IndexOf(sellerListSearchBar.Text, StringComparison.OrdinalIgnoreCase) >= 0)
+                        newSellerList.Add(seller);
                 }
+
+                sellerListView.ItemsSource = newSellerList;
             }
 
             // If a seller had already been chosen, then reselect it on the sellerList
             if (focusedSellerItem != null)
             {
-                sellerListView.SelectedItem = focusedSellerItem.ToString();
+                sellerListView.SelectedItem = focusedSellerItem;
             }
         }
 
-        
+        private void sellerAddressTextBox_SourceUpdated(object sender, DataTransferEventArgs e)
+        {
+
+        }
     }
 }

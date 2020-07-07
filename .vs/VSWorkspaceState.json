@@ -1,6 +1,11 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\Refashion",
+    "\\Refashion UI",
+    "\\Refashion\\Database",
+    "\\Refashion_WPF_UI"
   ],
+  "SelectedNode": "\\Refashion_WPF_UI\\MainWindow.xaml.cs",
   "PreviewInSolutionExplorer": false
 }

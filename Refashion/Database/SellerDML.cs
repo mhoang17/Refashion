@@ -11,7 +11,8 @@ namespace Refashion.Database
     public class SellerDML : RefashionDML
     {
         private MySqlCommand command;
-        private string connectionString = @"server=localhost;userid=devUser;password=devpass;database=refashion;Allow User Variables=True";
+        private string connectionString = @"server=localhost;userid=root;password=Demo1234;database=refashion;Allow User Variables=True";
+
         public SellerDML()
         {
             MySqlConnection con = new MySqlConnection(connectionString);
