@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Maria\\Source\\Repos\\Refashion\\Refashion\\Refashion.csproj",
+      "projectUniqueName": "C:\\Users\\Maria\\Source\\Repos\\Refashion2.0\\Refashion\\Refashion.csproj",
       "projectName": "Refashion",
-      "projectPath": "C:\\Users\\Maria\\Source\\Repos\\Refashion\\Refashion\\Refashion.csproj",
+      "projectPath": "C:\\Users\\Maria\\Source\\Repos\\Refashion2.0\\Refashion\\Refashion.csproj",
       "packagesPath": "C:\\Users\\Maria\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Maria\\Source\\Repos\\Refashion\\Refashion\\obj\\",
+      "outputPath": "C:\\Users\\Maria\\Source\\Repos\\Refashion2.0\\Refashion\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Maria\\AppData\\Roaming\\NuGet\\NuGet.Config",
