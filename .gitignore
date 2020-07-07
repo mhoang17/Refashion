@@ -353,4 +353,9 @@ Refashion/obj/Debug/net472/Refashion.exe
 Refashion/obj/Debug/net472/Refashion.csprojAssemblyReference.cache
 Refashion/bin/Debug/net472/Refashion.pdb
 Refashion/bin/Debug/net472/Refashion.exe
+Refashion/bin/Debug
+Refashion_WPF_UI/bin/Debug
+Refashion/obj/Debug
+Refashion_WPF_UI/obj/Debug
+*.suo
 .vs/Refashion/v16/.suo
