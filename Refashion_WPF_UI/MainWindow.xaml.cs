@@ -29,8 +29,7 @@ namespace Refashion_WPF_UI
     {
         private SellerDML sellerDML;
         private List<Seller> sellers;
-
-        private TagManipulation tagManipulator;
+        private string defaultSearchPlaceholder;
 
         public MainWindow()
         {
@@ -41,7 +40,8 @@ namespace Refashion_WPF_UI
             sellers = sellerDML.GetAll();
 
             sellerListView.ItemsSource = sellers;
-            tagManipulator = new TagManipulation();
+
+            defaultSearchPlaceholder = "Søg...";
         }
 
         // When the new seller button is clicked
@@ -151,8 +151,9 @@ namespace Refashion_WPF_UI
             city = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(city);
 
             // Create a seller and them into the database
+            // TODO: this is not an optimal way to get the tag from the database
             Seller newSeller = new Seller(name, email, address, city, int.Parse(zip), phoneNumber);
-            sellerDML.Insert_Single(newSeller);
+            newSeller.addSellerDB();
             newSeller = sellerDML.Select_Single("email:" + email);
 
             // Add the new seller to the local list
@@ -184,25 +185,16 @@ namespace Refashion_WPF_UI
             {
                 if (sellerListView.Items.Count > 0 && sellerListView.SelectedItem != null)
                 {
-                    Console.WriteLine(sellerListView.SelectedItem.ToString());
                     sellerInformation.DataContext = sellerListView.SelectedItem;
-
-                    int sellerTag = tagManipulator.sellerTagDecreaser(sellerListView.SelectedItem.ToString());
-                    Seller seller = (Seller) sellerListView.SelectedItem;
-                   
-                    string sellerTagString = seller.tagExtender();
 
                     // Display seller information
                     newSellerPanel.Visibility = Visibility.Collapsed;
-                    sellerTagInfoLabel.Content = sellerTagString;
-                    sellerJoinDateInfoBox.Content = "Oprettelse: " + seller.JoinDate.ToString("dd/MM-yyyy");
                     sellerInformationPanel.Visibility = Visibility.Visible;
 
                     // If it so happens that a seller was being edited when the selection was made, then hide the edit buttons and make it non-editable
                     finishEditingSeller();
 
                     return;
-                     
                 }
             }
             catch (ArgumentOutOfRangeException ex)
@@ -330,17 +322,18 @@ namespace Refashion_WPF_UI
             seller.City = city;
             seller.ZIP = int.Parse(zip);
             seller.PhoneNumber = phoneNumber;
-            sellerDML.Update_Single(seller);
+            seller.updateSellerDB();
 
             sellers[sellerIdx] = seller;
 
+            // TODO: Discuss if this edit is needed
             sellerListView.ClearValue(ItemsControl.ItemsSourceProperty);
             sellerListView.ItemsSource = sellers;
 
             // Mark the selection again
             sellerListView.SelectedItem = seller;
 
-            sellerListSearchBar.Text = "Søg...";
+            sellerListSearchBar.Text = defaultSearchPlaceholder;
 
             finishEditingSeller();
 
@@ -430,13 +423,13 @@ namespace Refashion_WPF_UI
 
                 // Remove seller from the backend and frontend
                 sellers.Remove(chosenSeller);
-                sellerDML.Delete_Single(chosenSeller);
+                chosenSeller.deleteSellerDB();
 
                 sellerListView.ClearValue(ItemsControl.ItemsSourceProperty);
                 sellerListView.ItemsSource = sellers;
 
                 // Reset the searchbar text to default
-                sellerListSearchBar.Text = "Søg...";
+                sellerListSearchBar.Text = defaultSearchPlaceholder;
             }
         }
 
@@ -446,15 +439,15 @@ namespace Refashion_WPF_UI
         // Methods for the seller searchbar
         private void sellerListSearchBar_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            // TODO: There might need a check so the text only disappears when "Søg..." is in the textfield
-            if(sellerListSearchBar.Text.Equals("Søg..."))
+            // TODO: There might need a check so the text only disappears when the default text is in the textfield
+            if(sellerListSearchBar.Text.Equals(defaultSearchPlaceholder))
                 sellerListSearchBar.Text = "";
         }
         private void sellerListSearchBar_LostFocus(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrEmpty(sellerListSearchBar.Text))
             {
-                sellerListSearchBar.Text = "Søg...";
+                sellerListSearchBar.Text = defaultSearchPlaceholder;
             }
         }
         

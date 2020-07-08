@@ -59,6 +59,7 @@ namespace Refashion
         // You can only retrieve seller tag.
 
         public int Tag { get { return tag; } }
+        public string TagString { get { return tagExtender(); } }
         public string Name { get { return name; } set { name = value; NotifyPropertyChanged(); } }
         public string Email { get { return email; } set { email = value; } }
         public string Address { get { return address; } set { address = value; } }
@@ -67,6 +68,8 @@ namespace Refashion
         // TODO: discuss if there should be a check on if the number is a certain length.
         public string PhoneNumber { get { return phoneNumber; } set { phoneNumber = value; } }
         public DateTime JoinDate { get { return joinDate; } set { joinDate = value; } }
+        public string JoinDateString { get { return "Oprettelse: " + joinDate.ToString("dd/MM-yyyy"); } }
+
 
         public override string ToString()
         {
@@ -102,11 +105,24 @@ namespace Refashion
             return sellerTagString;
         }
 
-        public void addSeller(Seller seller)
+        public void addSellerDB()
         {
+            // Be good to have a singleton pattern here
             SellerDML sellerDML = new SellerDML();
 
-            sellerDML.Insert_Single(seller);
+            sellerDML.Insert_Single(this);
+        }
+
+        public void deleteSellerDB()
+        {
+            SellerDML sellerDML = new SellerDML();
+            sellerDML.Delete_Single(this);
+        }
+
+        public void updateSellerDB()
+        {
+            SellerDML sellerDML = new SellerDML();
+            sellerDML.Update_Single(this);
         }
 
     }
