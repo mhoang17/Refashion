@@ -3,7 +3,7 @@ using System.Configuration;
 
 namespace Refashion.Database
 {
-    class DatabaseConnection
+    public class DatabaseConnection
     {
         private string connectionString;
         
