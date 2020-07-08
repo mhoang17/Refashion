@@ -47,7 +47,6 @@ C:\Users\Maria\Source\Repos\Refashion2.0\Refashion\bin\Debug\net472\System.Buffe
 C:\Users\Maria\Source\Repos\Refashion2.0\Refashion\bin\Debug\net472\System.Memory.dll
 C:\Users\Maria\Source\Repos\Refashion2.0\Refashion\bin\Debug\net472\System.Numerics.Vectors.dll
 C:\Users\Maria\Source\Repos\Refashion2.0\Refashion\bin\Debug\net472\System.Runtime.CompilerServices.Unsafe.dll
-C:\Users\Maria\Source\Repos\Refashion2.0\Refashion\obj\Debug\net472\Refashion.csprojAssemblyReference.cache
 C:\Users\Maria\Source\Repos\Refashion2.0\Refashion\obj\Debug\net472\Refashion.exe.config
 C:\Users\Maria\Source\Repos\Refashion2.0\Refashion\obj\Debug\net472\Refashion.AssemblyInfoInputs.cache
 C:\Users\Maria\Source\Repos\Refashion2.0\Refashion\obj\Debug\net472\Refashion.AssemblyInfo.cs
