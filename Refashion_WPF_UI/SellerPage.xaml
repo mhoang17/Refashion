@@ -4,8 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Refashion_WPF_UI"
-             mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             mc:Ignorable="d" Height="581.977" Width="1003.5">
     <UserControl.Resources>
         <Style x:Key="infoBoxHover" TargetType="TextBox">
             <Style.Triggers>
@@ -55,7 +54,7 @@
             <Label x:Name="newSellerZIPWarningLabel" Content="Postnr. skal være 4 cifre!" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,158.667,0,0" Width="252" Grid.Column="1" Grid.Row="1" Foreground="Red" Visibility="Collapsed"/>
         </Grid>
 
-        <ListView x:Name="sellerListView" HorizontalAlignment="Left" Height="288" VerticalAlignment="Top" Width="162" Margin="15.333,39.333,0,0" Grid.Row="2" Grid.Column="1" SelectionChanged="sellerListView_SelectionChanged">
+        <ListView x:Name="sellerListView" HorizontalAlignment="Left" Height="377" VerticalAlignment="Top" Width="192" Margin="15.667,44.667,0,0" Grid.Row="2" Grid.Column="1" SelectionChanged="sellerListView_SelectionChanged">
             <ListView.Resources>
                 <Style TargetType="GridViewColumnHeader">
                     <Setter Property="Visibility" Value="Collapsed" />
@@ -67,12 +66,12 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        <TextBox x:Name="sellerListSearchBar" HorizontalAlignment="Left" Height="23" Margin="15.333,16.333,0,0" TextWrapping="Wrap" Text="Søg..." VerticalAlignment="Top" Width="162" Grid.Row="2" Grid.Column="1" PreviewMouseLeftButtonDown="sellerListSearchBar_PreviewMouseLeftButtonDown" LostFocus="sellerListSearchBar_LostFocus" KeyUp="sellerListSearchBar_KeyUp"/>
-        <Button x:Name="newSellerBtn" Content="Ny sælger" HorizontalAlignment="Left" Margin="15.333,327.333,0,0" VerticalAlignment="Top" Width="162" Height="21" Grid.Row="2" Grid.Column="1" Click="newSellerBtn_Click"/>
+        <TextBox x:Name="sellerListSearchBar" HorizontalAlignment="Left" Height="23" Margin="15.667,16.667,0,0" TextWrapping="Wrap" Text="Søg..." VerticalAlignment="Top" Width="192" Grid.Row="2" Grid.Column="1" PreviewMouseLeftButtonDown="sellerListSearchBar_PreviewMouseLeftButtonDown" LostFocus="sellerListSearchBar_LostFocus" KeyUp="sellerListSearchBar_KeyUp"/>
+        <Button x:Name="newSellerBtn" Content="Ny sælger" HorizontalAlignment="Left" Margin="15.667,421.667,0,0" VerticalAlignment="Top" Width="192" Height="21" Grid.Row="2" Grid.Column="1" Click="newSellerBtn_Click"/>
         <Label x:Name="sellerTabPage" Content="Sælger Oversigt" HorizontalAlignment="Left" Margin="15.333,16,0,0" VerticalAlignment="Top" Width="265" FontWeight="Bold" FontSize="25" Grid.ColumnSpan="2" Height="43" Grid.Column="1" Grid.Row="1"/>
-        <Label x:Name="sellerSeparator" Content="" Grid.Column="1" HorizontalAlignment="Left" Margin="15.333,59,0,0" VerticalAlignment="Top" Background="#FF9B9B9B" Width="697" Height="3" Grid.ColumnSpan="2" Grid.Row="1"/>
-        <Grid x:Name="sellerInformationPanel" Grid.Column="2" HorizontalAlignment="Left" Height="332" Margin="18,16.333,0,0" Grid.Row="2" VerticalAlignment="Top" Width="497" Visibility="Collapsed">
-            <Grid x:Name="sellerInformation" HorizontalAlignment="Left" Height="165" VerticalAlignment="Top" Width="497" Background="#FFEFF7DD">
+        <Label x:Name="sellerSeparator" Content="" Grid.Column="1" HorizontalAlignment="Left" Margin="15.667,70,0,0" VerticalAlignment="Top" Background="#FF9B9B9B" Width="894" Height="3" Grid.ColumnSpan="2" Grid.Row="1"/>
+        <Grid x:Name="sellerInformationPanel" Grid.Column="2" HorizontalAlignment="Left" Height="426" Margin="17.667,16.667,0,0" Grid.Row="2" VerticalAlignment="Top" Width="648" Visibility="Visible" Background="White">
+            <Grid x:Name="sellerInformation" HorizontalAlignment="Left" Height="165" VerticalAlignment="Top" Width="648" Background="#FFEFF7DD">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="14*"/>
                     <RowDefinition Height="41*"/>
@@ -96,7 +95,22 @@
                 <Label x:Name="sellerInfoMissingInfoWarningLabel" Content="Udfyld venligst alle felter!" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,45,0,0" Width="253" Grid.Column="1" Grid.Row="1" Foreground="Red" Visibility="Collapsed"/>
                 <Label x:Name="sellerInfoZIPWarningLabel" Content="Postnr. skal være 4 cifre!" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,45,0,0" Width="253" Grid.Column="1" Grid.Row="1" Foreground="Red" Visibility="Collapsed"/>
             </Grid>
-            <Button x:Name="deleteSellerBtn" Content="Slet Sælger" HorizontalAlignment="Left" Margin="422,311,0,0" VerticalAlignment="Top" Width="75" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="Red" Click="deleteSellerBtn_Click"/>
+            <Button x:Name="deleteSellerBtn" Content="Slet Sælger" HorizontalAlignment="Left" Margin="563,395,0,0" VerticalAlignment="Top" Width="75" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="Red" Click="deleteSellerBtn_Click"/>
+            <ListView x:Name="sellerBagsListView" HorizontalAlignment="Left" Height="202" Margin="21,213,0,0" VerticalAlignment="Top" Width="313">
+                <ListView.Resources>
+                    <Style TargetType="GridViewColumnHeader">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                    </Style>
+                </ListView.Resources>
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+            <Button x:Name="addBagSellerPanelBtn" Content="Ny Pose" HorizontalAlignment="Left" Margin="370,394,0,0" VerticalAlignment="Top" Width="75" Height="21"/>
+            <Button x:Name="deleteBagPanelBtn" Content="Slet Pose" HorizontalAlignment="Left" Margin="464,394,0,0" VerticalAlignment="Top" Width="75" Height="21"/>
+            <Label x:Name="sellerBagsLabel" Content="Oprydningsposer" HorizontalAlignment="Left" Margin="21,178,0,0" VerticalAlignment="Top" Width="313" FontSize="15"/>
         </Grid>
 
     </Grid>

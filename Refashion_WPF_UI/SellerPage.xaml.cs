@@ -39,6 +39,8 @@ namespace Refashion_WPF_UI
 
             sellers = sellerDML.GetAll();
 
+            Console.WriteLine(sellers.Count);
+
             sellerListView.ItemsSource = sellers;
 
             defaultSearchPlaceholder = "Søg...";
@@ -149,7 +151,6 @@ namespace Refashion_WPF_UI
             // TODO: this is not an optimal way to get the tag from the database
             Seller newSeller = new Seller(name, email, address, city, int.Parse(zip), phoneNumber);
             newSeller.addSellerDB();
-            newSeller = sellerDML.Select_Single("email:" + email);
 
             // Add the new seller to the local list
             sellers.Add(newSeller);
