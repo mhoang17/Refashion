@@ -11,31 +11,23 @@ namespace Refashion.Database
     public class SellerDML : RefashionDML
     {
         private MySqlCommand command;
-        private string connectionString = @"server=localhost;userid=devUser;password=devpass;database=refashion;Allow User Variables=True";
+        private DatabaseConnection database;
         public SellerDML()
         {
-            MySqlConnection con = new MySqlConnection(connectionString);
-            con.Open();
-
-            string stm = "SELECT VERSION()";
-            MySqlCommand cmd = new MySqlCommand(stm, con);
-
-            string version = cmd.ExecuteScalar().ToString();
-            Console.WriteLine($"MySQL version: {version}");
-            con.Close();
+            database = new DatabaseConnection();
         }
 
         // TODO: create abstraction for try-catch 
         public List<Seller> GetAll()
         {
             List<Seller> sellers = new List<Seller>();
-            MySqlConnection con = new MySqlConnection(connectionString);
+            MySqlConnection con = database.GetConnection();
             try
             {
                 con.Open();
 
-                string query = "SELECT * " + 
-                            "FROM sellers";
+                string query = "SELECT * FROM sellers";
+
                 command = new MySqlCommand(query, con);
 
                 MySqlDataReader reader = command.ExecuteReader();
@@ -44,8 +36,6 @@ namespace Refashion.Database
                     sellers.Add(MapToSeller(reader));
                 }
                 reader.Close();
-
-                Console.WriteLine("Got " + sellers.Count().ToString() + " sellers");
             }
             catch (Exception e)
             {
@@ -63,38 +53,36 @@ namespace Refashion.Database
         {
             // empty seller in case query returns nothing
             Seller seller = new Seller("","","","",0,"");
-            MySqlConnection con = new MySqlConnection(connectionString);
+            MySqlConnection con = database.GetConnection();
             try
             {
                 string query = "SELECT * FROM sellers WHERE";
+                CommandBuilder commandBuilder = new CommandBuilder(query);
+
                 StringBuilder queryBuilder = new StringBuilder(query);
-
                 Dictionary<string, string> conditionDictionary = ParseConditionsToDictionary(conditions);
-                queryBuilder.Append(CreateEqualsParameters(conditionDictionary));
+                commandBuilder.AddEqualsParameters(conditionDictionary.Keys.ToList());
+                // Should only return a single result
+                commandBuilder.AddLimit(1);
 
-                // Return only a single row
-                queryBuilder.Append(" LIMIT 1");
+                commandBuilder.CreateCommand(con);
 
-                command = new MySqlCommand(queryBuilder.ToString(), con);
-                conditionDictionary = ParseConditionsToDictionary(conditions);
-                AddEqualsParameters(conditionDictionary);
-
-                Console.WriteLine(command.CommandText);
+                commandBuilder.AddEqualsParameterValues(conditionDictionary);
 
                 con.Open();
 
-                MySqlDataReader reader = command.ExecuteReader();
+                MySqlDataReader reader = commandBuilder.Command.ExecuteReader();
                 if (reader.Read())
                 {
                     seller = MapToSeller(reader);
                 }
                 reader.Close();
 
-                Console.WriteLine("Got seller with id: " + seller.Tag);
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
+                throw (e);
             }
             finally
             {
@@ -107,36 +95,32 @@ namespace Refashion.Database
         public List<Seller> Select_Multiple(string conditions)
         {
             List<Seller> sellers = new List<Seller>();
-            MySqlConnection con = new MySqlConnection(connectionString);
+            MySqlConnection con = database.GetConnection();
             try
             {
                 string query = "SELECT * FROM sellers WHERE";
-                StringBuilder queryBuilder = new StringBuilder(query);
+                CommandBuilder commandBuilder = new CommandBuilder(query);
 
                 Dictionary<string, string> conditionDictionary = ParseConditionsToDictionary(conditions);
-                queryBuilder.Append(CreateLikeParameters(conditionDictionary));
+                commandBuilder.AddLikeParameters(conditionDictionary.Keys.ToList());
 
-                command = new MySqlCommand(queryBuilder.ToString(), con);
+                commandBuilder.CreateCommand(con);
 
-                conditionDictionary = ParseConditionsToDictionary(conditions);
-                AddLikeParameters(conditionDictionary);
-
-                Console.WriteLine(command.CommandText);
+                commandBuilder.AddLikeParameterValues(conditionDictionary);
 
                 con.Open();
 
-                MySqlDataReader reader = command.ExecuteReader();
+                MySqlDataReader reader = commandBuilder.Command.ExecuteReader();
                 while (reader.Read())
                 {
                     sellers.Add(MapToSeller(reader));
                 }
                 reader.Close();
-
-                Console.WriteLine("Got " + sellers.Count().ToString() + " sellers");
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
+                throw (e);
             }
             finally
             {
@@ -157,6 +141,7 @@ namespace Refashion.Database
                 {
                     // incorrect format
                     // TODO: Throw correct error type
+                    throw new ArgumentException("Conditions must be of the form 'ConditionName:Value'");
                 }
 
                 string rowName = items[0].Trim();
@@ -166,30 +151,6 @@ namespace Refashion.Database
             }
 
             return conditionDictionary;
-        }
-
-        private string CreateEqualsParameters(Dictionary<string, string> conditions)
-        {
-            StringBuilder queryBuilder = new StringBuilder();
-
-            if (conditions.Count > 0)
-            {
-                KeyValuePair<string, string> firstCondition = conditions.First();
-
-                queryBuilder.Append(string.Format(" {0}=@{0}", firstCondition.Key));
-
-                // Remove the condition just added so it is not included in following loop
-                conditions.Remove(firstCondition.Key);
-            }
-            if(conditions.Count > 0)
-            {
-                foreach (KeyValuePair<string, string> conditionPair in conditions)
-                {
-                    queryBuilder.Append(string.Format(" OR {0} = '@{0}'", conditionPair.Key));
-                }
-            }
-
-            return queryBuilder.ToString();
         }
 
         private string CreateLikeParameters(Dictionary<string, string> conditions)
@@ -214,16 +175,6 @@ namespace Refashion.Database
             }
 
             return queryBuilder.ToString();
-        }
-
-        private void AddEqualsParameters(Dictionary<string, string> conditions)
-        {
-            foreach (KeyValuePair<string, string> conditionPair in conditions)
-            {
-                Console.WriteLine(conditionPair.Key + " : " + conditionPair.Value);
-                command.Parameters.AddWithValue(conditionPair.Key, conditionPair.Value);
-                //command.Parameters["@" + conditionPair.Key].Value = conditionPair.Value;
-            }
         }
 
         private void AddLikeParameters(Dictionary<string, string> conditions)
@@ -251,7 +202,7 @@ namespace Refashion.Database
 
         public void Insert_Single(Seller seller)
         {
-            var con = new MySqlConnection(connectionString);
+            var con = database.GetConnection();
             try
             {
                 con.Open();
@@ -277,6 +228,7 @@ namespace Refashion.Database
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
+                throw (e);
             }
             finally
             {
@@ -287,7 +239,7 @@ namespace Refashion.Database
         // Take max_allowed_packet into account
         public void Insert_Multiple(List<Seller> sellers)
         {
-            var con = new MySqlConnection(connectionString);
+            var con = database.GetConnection();
             try
             {
                 string query = "INSERT INTO sellers (name, email, address, postnumber, city, phonenumber) VALUES ";
@@ -331,7 +283,7 @@ namespace Refashion.Database
 
         public void Update_Single(Seller seller)
         {
-            var con = new MySqlConnection(connectionString);
+            var con = database.GetConnection();
             try
             {
                 con.Open();
@@ -367,7 +319,7 @@ namespace Refashion.Database
 
         public void Update_Multiple(List<Seller> sellers)
         {
-            var con = new MySqlConnection(connectionString);
+            var con = database.GetConnection();
             try
             {
                 string query = "INSERT INTO sellers (id, name, email, address, postnumber, city, phonenumber) VALUES ";
@@ -419,7 +371,7 @@ namespace Refashion.Database
         // TODO: Consider implementing soft delete
         public void Delete_Single(Seller seller)
         {
-            var con = new MySqlConnection(connectionString);
+            var con = database.GetConnection();
             try
             {
                 con.Open();
@@ -448,7 +400,7 @@ namespace Refashion.Database
 
         public void Delete_Multiple(List<Seller> sellers)
         {
-            var con = new MySqlConnection(connectionString);
+            var con = database.GetConnection();
             try
             {
                 string query = "DELETE FROM sellers WHERE (id) IN " + "(";

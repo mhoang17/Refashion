@@ -359,3 +359,5 @@ Refashion/obj/Debug
 Refashion_WPF_UI/obj/Debug
 *.suo
 .vs/Refashion/v16/.suo
+**/obj
+**/bin
