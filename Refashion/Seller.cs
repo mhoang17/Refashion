@@ -1,13 +1,10 @@
-﻿using Refashion.Database;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Refashion
 {
-    public class Seller : INotifyPropertyChanged
+    public class Seller
     {
         // Field
         private int tag;
@@ -19,10 +16,10 @@ namespace Refashion
         private string phoneNumber;
         private DateTime joinDate;
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
         // Constructors
-        // TODO: Need dateTime parameter
+        // TODO: Have to discuss how we give a user a tag.
+
+        // TODO: maybe delete this constructor after discussion.
         public Seller(int tag, string name, string email, string address, string city, int zip, string phoneNumber)
         {
 
@@ -34,33 +31,27 @@ namespace Refashion
             this.zip = zip;
             this.phoneNumber = phoneNumber;
 
-            // TODO: This should be the correct parameter
-            this.joinDate = DateTime.Now;
+            joinDate = DateTime.Today;
         }
 
         public Seller(string name, string email, string address, string city, int zip, string phoneNumber) {
 
-            // TODO: Discuss a better way to give a tag (Execute scalar).
+            // TODO: Have a concrete value and no longer the default value.
+            this.tag = 1;
             this.name = name;
             this.email = email;
             this.address = address;
             this.city = city;
             this.zip = zip;
             this.phoneNumber = phoneNumber;
-            joinDate = DateTime.Now;
-        }
 
-        private void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            joinDate = DateTime.Today;
         }
 
         // Getters and setters
         // You can only retrieve seller tag.
-
         public int Tag { get { return tag; } }
-        public string TagString { get { return tagExtender(); } }
-        public string Name { get { return name; } set { name = value; NotifyPropertyChanged(); } }
+        public string Name { get { return name; } set { name = value; } }
         public string Email { get { return email; } set { email = value; } }
         public string Address { get { return address; } set { address = value; } }
         public string City { get { return city; } set { city = value; } }
@@ -68,13 +59,11 @@ namespace Refashion
         // TODO: discuss if there should be a check on if the number is a certain length.
         public string PhoneNumber { get { return phoneNumber; } set { phoneNumber = value; } }
         public DateTime JoinDate { get { return joinDate; } set { joinDate = value; } }
-        public string JoinDateString { get { return "Oprettelse: " + joinDate.ToString("dd/MM-yyyy"); } }
-
 
         public override string ToString()
         {
             string tagString = tagExtender();
-
+            
             return tagString + " " + name;
         }
 
@@ -105,25 +94,27 @@ namespace Refashion
             return sellerTagString;
         }
 
-        public void addSellerDB()
+        public override bool Equals(object obj)
         {
-            // Be good to have a singleton pattern here
-            SellerDML sellerDML = new SellerDML();
-
-            sellerDML.Insert_Single(this);
+            return obj is Seller seller &&
+                   Name == seller.Name &&
+                   Email == seller.Email &&
+                   Address == seller.Address &&
+                   City == seller.City &&
+                   ZIP == seller.ZIP &&
+                   PhoneNumber == seller.PhoneNumber;
         }
 
-        public void deleteSellerDB()
+        public override int GetHashCode()
         {
-            SellerDML sellerDML = new SellerDML();
-            sellerDML.Delete_Single(this);
+            int hashCode = 18982924;
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Name);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Email);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Address);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(City);
+            hashCode = hashCode * -1521134295 + ZIP.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(PhoneNumber);
+            return hashCode;
         }
-
-        public void updateSellerDB()
-        {
-            SellerDML sellerDML = new SellerDML();
-            sellerDML.Update_Single(this);
-        }
-
     }
 }
