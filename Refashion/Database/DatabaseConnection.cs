@@ -19,5 +19,7 @@ namespace Refashion.Database
         {
             return new MySqlConnection(connectionString);
         }
+
+
     }
 }

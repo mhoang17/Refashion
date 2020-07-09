@@ -94,5 +94,27 @@ namespace Refashion
             return sellerTagString;
         }
 
+        public override bool Equals(object obj)
+        {
+            return obj is Seller seller &&
+                   Name == seller.Name &&
+                   Email == seller.Email &&
+                   Address == seller.Address &&
+                   City == seller.City &&
+                   ZIP == seller.ZIP &&
+                   PhoneNumber == seller.PhoneNumber;
+        }
+
+        public override int GetHashCode()
+        {
+            int hashCode = 18982924;
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Name);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Email);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Address);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(City);
+            hashCode = hashCode * -1521134295 + ZIP.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(PhoneNumber);
+            return hashCode;
+        }
     }
 }
