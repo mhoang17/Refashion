@@ -103,41 +103,6 @@ namespace Refashion.Database
 
         }
 
-        public void AddValuesToInsert(Dictionary<string, List<string>> parameters)
-        {
-            // Create format string
-            StringBuilder formatString = new StringBuilder("(");
-            List<string> formatParameters = new List<string>();
-            for (int i = 0; i < parameters.Keys.Count; i++)
-            {
-                formatParameters.Append("{" + i + "}");
-            }
-            // Remove the last comma
-            formatString.Append(string.Join(",", formatParameters));
-            formatString.Append(")");
-
-            // Transform parameterValues into nested list of strings and transpose
-            List<List<string>> parameterLists = parameters.Values.ToList();
-
-            // Each resulting list contains the values of all colums of a single row
-            List<List<string>> result = parameterLists
-                .SelectMany(inner => inner.Select((item, index) => new { item, index }))
-                .GroupBy(i => i.index, i => i.item)
-                .Select(g => g.ToList())
-                .ToList();
-
-
-            List<string> rows = new List<string>();
-            foreach (List<string> row in result)
-            {
-                rows.Add(string.Format("('{0}','{1}','{2}','{3}','{4}','{5}',{6})", row.ToArray()));
-            }
-
-            Query.Append(string.Join(",", rows));
-            Query.Append(";");
-            /**/
-        }
-
         public void AddValuesToInsert(List<List<string>> rowValues)
         {
             if(rowValues.Count < 1)
@@ -152,7 +117,6 @@ namespace Refashion.Database
             {
                 formatParameters.Add("'{" + i + "}'");
             }
-            // Remove the last comma
             formatString.Append(string.Join(",", formatParameters));
             formatString.Append(")");
 
