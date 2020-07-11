@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -61,13 +62,11 @@ namespace Refashion.Database
 
                 StringBuilder queryBuilder = new StringBuilder(query);
                 Dictionary<string, string> conditionDictionary = ParseConditionsToDictionary(conditions);
-                commandBuilder.AddEqualsParameters(conditionDictionary.Keys.ToList());
+                commandBuilder.AddEqualsParameters(conditionDictionary);
                 // Should only return a single result
                 commandBuilder.AddLimit(1);
 
                 commandBuilder.CreateCommand(con);
-
-                commandBuilder.AddEqualsParameterValues(conditionDictionary);
 
                 con.Open();
 
@@ -102,11 +101,9 @@ namespace Refashion.Database
                 CommandBuilder commandBuilder = new CommandBuilder(query);
 
                 Dictionary<string, string> conditionDictionary = ParseConditionsToDictionary(conditions);
-                commandBuilder.AddLikeParameters(conditionDictionary.Keys.ToList());
+                commandBuilder.AddLikeParameters(conditionDictionary);
 
                 commandBuilder.CreateCommand(con);
-
-                commandBuilder.AddLikeParameterValues(conditionDictionary);
 
                 con.Open();
 
@@ -210,39 +207,76 @@ namespace Refashion.Database
             var con = database.GetConnection();
             try
             {
-                string query = "INSERT INTO sellers (name, email, address, postnumber, city, phonenumber, woocommerceId) VALUES ";
-                StringBuilder queryBuilder = new StringBuilder(query);
+                // (name, email, address, postnumber, city, phonenumber, woocommerceId)
+                //VALUES
 
-                List<string> sellerRows = new List<string>();
-                foreach (Seller seller in sellers)
-                {   
-                    sellerRows.Add(string.Format("('{0}','{1}','{2}','{3}','{4}','{5}',{6})",
-                        MySqlHelper.EscapeString(seller.Name),
-                        MySqlHelper.EscapeString(seller.Email),
-                        MySqlHelper.EscapeString(seller.Address),
-                        seller.ZIP,
-                        MySqlHelper.EscapeString(seller.City),
-                        MySqlHelper.EscapeString(seller.PhoneNumber.ToString()),
-                        seller.WooCommerceId
-                        ));
+                List<string> sellerParameters = new List<string>()
+                {
+                    "name",
+                    "email",
+                    "address",
+                    "postnumber",
+                    "city",
+                    "phonenumber",
+                    "woocommerceId"
+                };
+
+                CommandBuilder commandBuilder = new CommandBuilder("INSERT INTO sellers ");
+                commandBuilder.AddInsertParameters(sellerParameters);
+
+                /*
+                Dictionary<string, List<string>> sellerValues = new Dictionary<string, List<string>>();
+
+                foreach (string str in sellerParameters)
+                {
+                    sellerValues.Add(str, new List<string>());
                 }
 
-                queryBuilder.Append(string.Join(",", sellerRows));
-                queryBuilder.Append(";");
+                foreach (Seller seller in sellers) 
+                {
+                    sellerValues["name"].Add(seller.Name);
+                    sellerValues["email"].Add(seller.Email);
+                    sellerValues["address"].Add(seller.Address);
+                    sellerValues["postnumber"].Add(seller.ZIP.ToString());
+                    sellerValues["city"].Add(seller.City);
+                    sellerValues["phonenumber"].Add(seller.PhoneNumber);
+                    sellerValues["woocommerceId"].Add(seller.WooCommerceId.ToString());
+                }
 
+                /* 
+                 * Same as above but with linq
+                 *
+                 sellerValues["name"] = sellers.Select(seller => seller.Name).ToList();
+                sellerValues["email"] = sellers.Select(seller => seller.Email).ToList();
+                sellerValues["address"] = sellers.Select(seller => seller.Address).ToList();
+                sellerValues["postnumber"] = sellers.Select(seller => seller.ZIP.ToString()).ToList();
+                sellerValues["city"] = sellers.Select(seller => seller.City).ToList();
+                sellerValues["phonenumber"] = sellers.Select(seller => seller.PhoneNumber).ToList();
+                sellerValues["woocommerceId"] = sellers.Select(seller => seller.WooCommerceId.ToString()).ToList();
+                */
+
+                //commandBuilder.AddValuesToInsert(sellerValues);
+
+                List<List<string>> rows = new List<List<string>>();
+                foreach (Seller seller in sellers)
+                {
+                    rows.Add(mapSellerToStrings(seller));
+                }
+
+                commandBuilder.AddValuesToInsert(rows);
                 con.Open();
 
-                command = new MySqlCommand(queryBuilder.ToString(), con);
-                command.CommandType = CommandType.Text;
+                commandBuilder.CreateCommand(con);
+                commandBuilder.Command.CommandType = CommandType.Text;
 
-                bool querySuccess = command.ExecuteNonQuery() > 0;
+                bool querySuccess = commandBuilder.Command.ExecuteNonQuery() > 0;
 
                 Console.WriteLine("Success: " + querySuccess.ToString());
-                Console.WriteLine("Inserted " + sellerRows.Count + " sellers ");
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
+                throw (e);
             }
             finally
             {
@@ -250,14 +284,34 @@ namespace Refashion.Database
             }
         }
 
+        private List<string> mapSellerToStrings(Seller seller)
+        {
+            List<string> row = new List<string>()
+            {
+                seller.Name,
+                seller.Email,
+                seller.Address,
+                seller.ZIP.ToString(),
+                seller.City,
+                seller.PhoneNumber,
+                seller.WooCommerceId.ToString()
+            };
+
+            return row;
+        }
+
         public void Update_Single(Seller seller)
         {
             var con = database.GetConnection();
+            if(seller.Tag == 0)
+            {
+                throw new ArgumentException("Seller must have a valid Tag to be updated");
+            }
             try
             {
                 con.Open();
 
-                var query = "UPDATE sellers SET name=@name, email=@email, address=@email, postnumber=@postnumber, city=@city, phonenumber=@phonenumber, woocommerceId=@woocommerceId " +
+                var query = "UPDATE sellers SET name=@name, email=@email, address=@address, postnumber=@postnumber, city=@city, phonenumber=@phonenumber, woocommerceId=@woocommerceId " +
                             "WHERE id=@id";
                 command = new MySqlCommand(query, con);
 
@@ -289,10 +343,15 @@ namespace Refashion.Database
 
         public void Update_Multiple(List<Seller> sellers)
         {
+            if (sellers.FindAll(seller => seller.Tag == 0).Count > 0)
+            {
+                throw new ArgumentException("All sellers must have a valid tag");
+            }
+
             var con = database.GetConnection();
             try
             {
-                string query = "INSERT INTO sellers (id, name, email, address, postnumber, city, phonenumber) VALUES ";
+                string query = "INSERT INTO sellers (id, name, email, address, postnumber, city, phonenumber, woocommerceId) VALUES ";
                 StringBuilder queryBuilder = new StringBuilder(query);
 
                 List<string> sellerRows = new List<string>();
@@ -311,7 +370,7 @@ namespace Refashion.Database
                 }
 
                 queryBuilder.Append(string.Join(",", sellerRows));
-                queryBuilder.Append(" ON DUPLICATE KEY UPDATE" +
+                queryBuilder.Append(" ON DUPLICATE KEY UPDATE " +
                                     "name=VALUEs(name)," +
                                     "email=VALUES(email)," +
                                     "address=VALUES(address)," +

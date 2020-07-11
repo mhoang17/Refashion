@@ -136,6 +136,7 @@ namespace Refashion_WPF_UI
             string city = sellerCityTextBox.Text;
             string zip = sellerZIPTextBox.Text;
             string phoneNumber = sellerPhoneTextBox.Text;
+            string wooCommerceId = "";
 
             if (triggerInformationWarnings(name, email, address, city, zip, phoneNumber))
                 return;
@@ -147,8 +148,8 @@ namespace Refashion_WPF_UI
 
             // Create a seller and them into the database
             // TODO: this is not an optimal way to get the tag from the database
-            Seller newSeller = new Seller(name, email, address, city, int.Parse(zip), phoneNumber);
-            newSeller.addSellerDB();
+            Seller newSeller = new Seller(name, email, address, city, int.Parse(zip), phoneNumber, int.Parse(wooCommerceId));
+            //newSeller.addSellerDB();
             newSeller = sellerDML.Select_Single("email:" + email);
 
             // Add the new seller to the local list
@@ -317,7 +318,7 @@ namespace Refashion_WPF_UI
             seller.City = city;
             seller.ZIP = int.Parse(zip);
             seller.PhoneNumber = phoneNumber;
-            seller.updateSellerDB();
+            //seller.updateSellerDB();
 
             sellers[sellerIdx] = seller;
 
@@ -418,7 +419,7 @@ namespace Refashion_WPF_UI
 
                 // Remove seller from the backend and frontend
                 sellers.Remove(chosenSeller);
-                chosenSeller.deleteSellerDB();
+                //chosenSeller.deleteSellerDB();
 
                 sellerListView.ClearValue(ItemsControl.ItemsSourceProperty);
                 sellerListView.ItemsSource = sellers;

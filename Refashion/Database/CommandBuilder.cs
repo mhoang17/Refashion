@@ -12,26 +12,30 @@ namespace Refashion.Database
         public StringBuilder Query { get; private set; }
         public MySqlCommand Command { get; private set; }
         private bool hasFirstParameter = false;
-        private List<string> parameters = new List<string>();
+        //private List<string> parameters = new List<string>();
+        private Dictionary<string, string> parameters = new Dictionary<string, string>();
 
         public CommandBuilder(string baseCommand)
         {
             Query = new StringBuilder(baseCommand);
         }
 
-        public void AddEqualsParameters(List<string> parameters)
+        public void AddEqualsParameters(Dictionary<string, string> parameters)
         {
-            foreach (string parameter in parameters)
+            foreach (KeyValuePair<string, string> parameter in parameters)
             {
-                AddEqualParameter(parameter);
+                AddEqualsParameter(parameter.Key, parameter.Value);
             }
         }
 
         // Adds an equal parameter to query
         // Might be vulnerable to SQL injection
-        public void AddEqualParameter(string parameterName)
+        public void AddEqualsParameter(string parameterName, string parameterValue)
         {
+            // Add parameter to query
             AddParameter("=", parameterName);
+            // Save parameter name and value
+            parameters.Add(parameterName, parameterValue);
         }
 
         public void AddLimit(uint limit)
@@ -42,32 +46,32 @@ namespace Refashion.Database
         public void CreateCommand(MySqlConnection connection)
         {
             Command = new MySqlCommand(Query.ToString(), connection);
+            addParameterValues();
         }
 
-        public void AddEqualsParameterValues(Dictionary<string, string> parameters)
+        private void addParameterValues()
         {
             foreach (KeyValuePair<string, string> parameter in parameters)
             {
-                AddEqualsParameterValue(parameter.Key, parameter.Value);
+                Command.Parameters.AddWithValue(parameter.Key, parameter.Value);
             }
-        }
-        public void AddEqualsParameterValue(string parameterName, string value)
-        {
-            Command.Parameters.AddWithValue(parameterName, value);
         }
 
         // Almost same logic as equal parameters
-        public void AddLikeParameters(List<string> parameters)
+        public void AddLikeParameters(Dictionary<string, string> parameters)
         {
-            foreach (string parameter in parameters)
+            foreach (KeyValuePair<string, string> parameter in parameters)
             {
-                AddLikeParameter(parameter);
+                AddLikeParameter(parameter.Key, parameter.Value);
             }
         }
 
-        public void AddLikeParameter(string parameterName)
+        public void AddLikeParameter(string parameterName, string parameterValue)
         {
+            // Add parameter to query
             AddParameter("LIKE", parameterName);
+            // Save parameter name and value
+            parameters.Add(parameterName, "%" + parameterValue + "%");
         }
 
         public void AddParameter(string parameterType, string parameterName)
@@ -83,21 +87,90 @@ namespace Refashion.Database
             }
 
             Query.Append(string.Format(" {0} " + parameterType + " @{0}", parameterName));
-
-            parameters.Add(parameterName);
         }
 
-        public void AddLikeParameterValues(Dictionary<string, string> parameters)
+        public void AddInsertParameters(List<string> parameters)
         {
-            foreach (KeyValuePair<string, string> parameter in parameters)
+            Query.Append(" (");
+
+            // Add all parameters, with correctly placed commas
+            Query.Append(parameters[0]);
+            for (int i = 1; i < parameters.Count; i++)
             {
-                AddLikeParameterValue(parameter.Key, parameter.Value);
+                Query.Append("," + parameters[i]);
             }
+            Query.Append(") VALUES ");
+
         }
 
-        public void AddLikeParameterValue(string parameterName, string value)
+        public void AddValuesToInsert(Dictionary<string, List<string>> parameters)
         {
-            Command.Parameters.AddWithValue(parameterName, "%" + value + "%");
+            // Create format string
+            StringBuilder formatString = new StringBuilder("(");
+            List<string> formatParameters = new List<string>();
+            for (int i = 0; i < parameters.Keys.Count; i++)
+            {
+                formatParameters.Append("{" + i + "}");
+            }
+            // Remove the last comma
+            formatString.Append(string.Join(",", formatParameters));
+            formatString.Append(")");
+
+            // Transform parameterValues into nested list of strings and transpose
+            List<List<string>> parameterLists = parameters.Values.ToList();
+
+            // Each resulting list contains the values of all colums of a single row
+            List<List<string>> result = parameterLists
+                .SelectMany(inner => inner.Select((item, index) => new { item, index }))
+                .GroupBy(i => i.index, i => i.item)
+                .Select(g => g.ToList())
+                .ToList();
+
+
+            List<string> rows = new List<string>();
+            foreach (List<string> row in result)
+            {
+                rows.Add(string.Format("('{0}','{1}','{2}','{3}','{4}','{5}',{6})", row.ToArray()));
+            }
+
+            Query.Append(string.Join(",", rows));
+            Query.Append(";");
+            /**/
+        }
+
+        public void AddValuesToInsert(List<List<string>> rowValues)
+        {
+            if(rowValues.Count < 1)
+            {
+                return;
+            }
+
+            // Create format string
+            StringBuilder formatString = new StringBuilder("(");
+            List<string> formatParameters = new List<string>();
+            for (int i = 0; i < rowValues[0].Count; i++)
+            {
+                formatParameters.Add("'{" + i + "}'");
+            }
+            // Remove the last comma
+            formatString.Append(string.Join(",", formatParameters));
+            formatString.Append(")");
+
+            List<string> rows = new List<string>();
+            foreach (List<string> row in rowValues)
+            {
+                rows.Add(string.Format(formatString.ToString(), row.ToArray()));
+            }
+
+            Query.Append(string.Join(",", rows));
+            Query.Append(";");
+            /**/
+        }
+
+
+        public void UpdateDuplicateKeys()
+        {
+
         }
     }
 }

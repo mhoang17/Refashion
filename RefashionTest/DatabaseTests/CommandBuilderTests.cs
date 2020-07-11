@@ -26,10 +26,22 @@ namespace RefashionTest.DatabaseTests
             string expected = "parameter = @parameter";
             CommandBuilder commandBuilder = new CommandBuilder("");
 
-            commandBuilder.AddEqualParameter("parameter");
+            commandBuilder.AddEqualsParameter("parameter", "");
             string actual = commandBuilder.Query.ToString();
 
             Assert.IsTrue(actual.Contains(expected));
+        }
+
+        [TestMethod]
+        public void AddEqualsParameter_Adds_Single_Parameter_To_Command()
+        {
+            string parameterName = "parameter";
+            CommandBuilder commandBuilder = new CommandBuilder("");
+
+            commandBuilder.AddEqualsParameter(parameterName, "value");
+            commandBuilder.CreateCommand(new MySqlConnection(""));
+
+            Assert.IsTrue(commandBuilder.Command.Parameters.Contains(parameterName));
         }
 
         [TestMethod]
@@ -37,9 +49,9 @@ namespace RefashionTest.DatabaseTests
         {
             string expected = " OR parameter2 = @parameter2";
             CommandBuilder commandBuilder = new CommandBuilder("");
-            commandBuilder.AddEqualParameter("parameter");
+            commandBuilder.AddEqualsParameter("parameter", "");
 
-            commandBuilder.AddEqualParameter("parameter2");
+            commandBuilder.AddEqualsParameter("parameter2", "");
             string actual = commandBuilder.Query.ToString();
 
             Assert.IsTrue(actual.Contains(expected));
@@ -51,10 +63,22 @@ namespace RefashionTest.DatabaseTests
             string expected = "parameter LIKE @parameter";
             CommandBuilder commandBuilder = new CommandBuilder("");
 
-            commandBuilder.AddLikeParameter("parameter");
+            commandBuilder.AddLikeParameter("parameter", "");
             string actual = commandBuilder.Query.ToString();
 
             Assert.IsTrue(actual.Contains(expected));
+        }
+
+        [TestMethod]
+        public void AddLikeParameter_Adds_Single_Parameter_To_Command()
+        {
+            string parameterName = "parameter";
+            CommandBuilder commandBuilder = new CommandBuilder("");
+
+            commandBuilder.AddLikeParameter(parameterName, "value");
+            commandBuilder.CreateCommand(new MySqlConnection(""));
+
+            Assert.IsTrue(commandBuilder.Command.Parameters.Contains(parameterName));
         }
 
         [TestMethod]
@@ -62,9 +86,9 @@ namespace RefashionTest.DatabaseTests
         {
             string expected = "OR parameter2 LIKE @parameter2";
             CommandBuilder commandBuilder = new CommandBuilder("");
-            commandBuilder.AddLikeParameter("parameter");
+            commandBuilder.AddLikeParameter("parameter", "");
 
-            commandBuilder.AddLikeParameter("parameter2");
+            commandBuilder.AddLikeParameter("parameter2", "");
             string actual = commandBuilder.Query.ToString();
 
             Assert.IsTrue(actual.Contains(expected));
