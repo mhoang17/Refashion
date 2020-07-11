@@ -15,7 +15,7 @@
         </Style>
     </UserControl.Resources>
 
-    <Grid x:Name="sellerGrid">
+    <Grid x:Name="sellerGrid" Background="White">
         <Grid.RowDefinitions>
             <RowDefinition Height="38*"/>
             <RowDefinition Height="69*"/>
@@ -94,11 +94,28 @@
                 <Button x:Name="cancelSellerInfoBtn" Content="Annuller" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75" Grid.Column="1" Margin="123,76,0,0" Click="cancelSellerInfoBtn_Click" Visibility="Hidden" Grid.Row="1" Height="21"/>
                 <Label x:Name="sellerInfoMissingInfoWarningLabel" Content="Udfyld venligst alle felter!" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,45,0,0" Width="253" Grid.Column="1" Grid.Row="1" Foreground="Red" Visibility="Collapsed"/>
                 <Label x:Name="sellerInfoZIPWarningLabel" Content="Postnr. skal være 4 cifre!" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,45,0,0" Width="253" Grid.Column="1" Grid.Row="1" Foreground="Red" Visibility="Collapsed"/>
+                <Grid HorizontalAlignment="Left" Height="100" Margin="47,54,0,-30.667" Grid.Row="1" VerticalAlignment="Top" Width="100"/>
             </Grid>
-            <Button x:Name="deleteSellerBtn" Content="Slet Sælger" HorizontalAlignment="Left" Margin="563,395,0,0" VerticalAlignment="Top" Width="75" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="Red" Click="deleteSellerBtn_Click"/>
-            <ListView x:Name="sellerBagsListView" HorizontalAlignment="Left" Height="202" Margin="21,213,0,0" VerticalAlignment="Top" Width="313">
+            <Button x:Name="deleteSellerBtn" Content="Slet Sælger" HorizontalAlignment="Left" Margin="563,10,0,0" VerticalAlignment="Top" Width="75" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="Red" Click="deleteSellerBtn_Click"/>
+            <Button x:Name="addSellerBagBtn" Content="Ny Pose" HorizontalAlignment="Left" Margin="344,213,0,0" VerticalAlignment="Top" Width="75" Height="29" Click="addSellerBagBtn_Click"/>
+            <Label x:Name="sellerBagsLabel" Content="Oprydningsposer" HorizontalAlignment="Left" Margin="0,178,0,0" VerticalAlignment="Top" Width="313" FontSize="15"/>
+            <ComboBox x:Name="sellerBagsComboBox" HorizontalAlignment="Left" Margin="0,213,0,0" VerticalAlignment="Top" Width="339" FontSize="17" SelectionChanged="sellerBagsComboBox_SelectionChanged"/>
+            <Grid x:Name="sellerBagContainsPanel" HorizontalAlignment="Left" Height="175" VerticalAlignment="Top" Width="648" Background="#FFEFF7DD" Margin="0,251,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="14*"/>
+                    <RowDefinition Height="41*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                </Grid.ColumnDefinitions>
+            </Grid>
+            <Button x:Name="deleteSellerBagBtn" Content="Slet Pose" HorizontalAlignment="Left" Margin="563,263,0,0" VerticalAlignment="Top" Width="75" Height="21" Click="deleteSellerBagBtn_Click" Visibility="Collapsed"/>
+            <Button x:Name="editSellerBagBtn" Content="Rediger Pose" HorizontalAlignment="Left" Margin="483,263,0,0" VerticalAlignment="Top" Width="75" Height="21" Visibility="Collapsed" Click="editSellerBagBtn_Click"/>
+        </Grid>
+        <Grid Grid.ColumnSpan="2" HorizontalAlignment="Left" Height="100" Margin="34,93.667,0,0" Grid.Row="2" VerticalAlignment="Top" Width="100"/>
+        <Grid x:Name="bagPanel" HorizontalAlignment="Left" Height="582" VerticalAlignment="Top" Width="1003" Background="White" Grid.RowSpan="3" Grid.ColumnSpan="3" Margin="0,-1,0,0" Visibility="Collapsed">
+            <ListView x:Name="productListView" HorizontalAlignment="Left" Height="377" VerticalAlignment="Top" Width="192" Margin="99,175,0,0">
                 <ListView.Resources>
-                    <Style TargetType="GridViewColumnHeader">
+                    <Style TargetType="{x:Type GridViewColumnHeader}">
                         <Setter Property="Visibility" Value="Collapsed" />
                     </Style>
                 </ListView.Resources>
@@ -108,10 +125,12 @@
                     </GridView>
                 </ListView.View>
             </ListView>
-            <Button x:Name="addBagSellerPanelBtn" Content="Ny Pose" HorizontalAlignment="Left" Margin="370,394,0,0" VerticalAlignment="Top" Width="75" Height="21"/>
-            <Button x:Name="deleteBagPanelBtn" Content="Slet Pose" HorizontalAlignment="Left" Margin="464,394,0,0" VerticalAlignment="Top" Width="75" Height="21"/>
-            <Label x:Name="sellerBagsLabel" Content="Oprydningsposer" HorizontalAlignment="Left" Margin="21,178,0,0" VerticalAlignment="Top" Width="313" FontSize="15"/>
+            <TextBox x:Name="productSearchBar" HorizontalAlignment="Left" Height="23" Margin="99,147,0,0" TextWrapping="Wrap" Text="Søg..." VerticalAlignment="Top" Width="192"/>
+            <Label x:Name="bagTitleLabel" Content="{Binding Path=BagIDString, Mode=OneWay}" HorizontalAlignment="Left" Margin="99,63,0,0" VerticalAlignment="Top" Width="265" FontWeight="Bold" FontSize="25" Height="43"/>
+            <Label x:Name="bagSeperator" Content="" HorizontalAlignment="Left" Margin="99,117,0,0" VerticalAlignment="Top" Background="#FF9B9B9B" Width="894" Height="3"/>
+            <Button x:Name="newProductBtn" Content="Ny Vare" HorizontalAlignment="Left" Margin="99,551,0,0" VerticalAlignment="Top" Width="192" Height="21"/>
+            <Button x:Name="saveBagBtn" Content="Gem Pose" HorizontalAlignment="Left" Margin="796,551,0,0" VerticalAlignment="Top" Width="75" Click="saveBagBtn_Click"/>
+            <Button x:Name="cancelBagBtn" Content="Annuller" HorizontalAlignment="Left" Margin="899,551,0,0" VerticalAlignment="Top" Width="75" IsCancel="True" Click="cancelBagBtn_Click"/>
         </Grid>
-
     </Grid>
 </UserControl>

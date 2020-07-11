@@ -10,22 +10,22 @@ namespace Refashion
     {
         // Field
         private int bagID;
-        private Seller seller;
+        private int sellerTag;
         private DateTime registrationDate;
 
         // Constructors
         // This one is used for databse interaction
-        public Bag(int bagID, Seller seller, DateTime registrationDate)
+        public Bag(int bagID, int sellerTag, DateTime registrationDate)
         {
             this.bagID = bagID;
-            this.seller = seller;
+            this.sellerTag = sellerTag;
             this.registrationDate = registrationDate;
         }
         
-        public Bag(Seller seller)
+        public Bag(int sellerTag)
         {
             bagID = 1;
-            this.seller = seller;
+            this.sellerTag = sellerTag;
             registrationDate = DateTime.Now;
         }
 
@@ -33,12 +33,12 @@ namespace Refashion
         public string BagIDString {
             get
             {
-                int tagLength = 3;
+                int tagLength = 5;
 
                 return TagManipulator.Instance.tagExtender(tagLength, bagID);
             }
         }
-        public Seller Seller { get { return seller; } set { seller = value; } }
+        public int SellerTag { get { return sellerTag; } set { sellerTag = value; } }
         public DateTime RegistrationDate { get { return registrationDate; }}
         public string RegistrationDateString { get { return "Oprettelse: " + registrationDate; } }
         public override string ToString()

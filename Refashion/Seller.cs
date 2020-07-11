@@ -93,11 +93,7 @@ namespace Refashion
 
         public override string ToString()
         {
-            int tagLength = 4;
-
-            string tagString = TagManipulator.Instance.tagExtender(tagLength,tag);
-            
-            return tagString + " " + name;
+            return TagString + " " + name;
         }
 
         public override bool Equals(object obj)
