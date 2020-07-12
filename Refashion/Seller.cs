@@ -14,13 +14,14 @@ namespace Refashion
         private string city;
         private int zip;
         private string phoneNumber;
+        private int woocommerceId;
         private DateTime joinDate;
 
         // Constructors
         // TODO: Have to discuss how we give a user a tag.
 
         // TODO: maybe delete this constructor after discussion.
-        public Seller(int tag, string name, string email, string address, string city, int zip, string phoneNumber)
+        public Seller(int tag, string name, string email, string address, string city, int zip, string phoneNumber, int woocommerceId)
         {
 
             this.tag = tag;
@@ -30,20 +31,22 @@ namespace Refashion
             this.city = city;
             this.zip = zip;
             this.phoneNumber = phoneNumber;
+            this.WooCommerceId = woocommerceId;
 
             joinDate = DateTime.Today;
         }
 
-        public Seller(string name, string email, string address, string city, int zip, string phoneNumber) {
+        public Seller(string name, string email, string address, string city, int zip, string phoneNumber, int woocommerceId) {
 
             // TODO: Have a concrete value and no longer the default value.
-            this.tag = 1;
+            this.tag = 0;
             this.name = name;
             this.email = email;
             this.address = address;
             this.city = city;
             this.zip = zip;
             this.phoneNumber = phoneNumber;
+            this.woocommerceId = woocommerceId;
 
             joinDate = DateTime.Today;
         }
@@ -58,6 +61,7 @@ namespace Refashion
         public int ZIP { get { return zip; } set { zip = value; } }
         // TODO: discuss if there should be a check on if the number is a certain length.
         public string PhoneNumber { get { return phoneNumber; } set { phoneNumber = value; } }
+        public int WooCommerceId { get { return woocommerceId; } set { woocommerceId = value; } }
         public DateTime JoinDate { get { return joinDate; } set { joinDate = value; } }
 
         public override string ToString()

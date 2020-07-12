@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MySql.Data.MySqlClient;
 using Refashion.Database;
@@ -102,6 +103,34 @@ namespace RefashionTest.DatabaseTests
             commandBuilder.CreateCommand(new MySqlConnection(""));
 
             Assert.IsTrue(commandBuilder.Command.CommandText.Contains(expected));
+        }
+
+        [TestMethod]
+        public void AddInsertParameters_Adds_Parameters_To_Query()
+        {
+            string expected = "(parameter1,parameter2)";
+            CommandBuilder commandBuilder = new CommandBuilder("");
+
+            commandBuilder.AddInsertParameters(new List<string>
+            {
+                "parameter1",
+                "parameter2"
+            });
+
+            string actual = commandBuilder.Query.ToString();
+            Assert.IsTrue(actual.Contains(expected));
+        }
+
+        [TestMethod]
+        public void AddInsertParameters_Given_Empty_List_Does_Not_Change_Query()
+        {
+            string expected = "";
+            CommandBuilder commandBuilder = new CommandBuilder("");
+
+            commandBuilder.AddInsertParameters(new List<string>());
+
+            string actual = commandBuilder.Query.ToString();
+            Assert.AreEqual(expected, actual);
         }
 
     }

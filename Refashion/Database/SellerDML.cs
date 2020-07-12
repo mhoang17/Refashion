@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Refashion.Database
 {
-    public class SellerDML : RefashionDML
+    public class SellerDML : RefashionDML<Seller>
     {
         private MySqlCommand command;
         private DatabaseConnection database;
@@ -224,39 +224,6 @@ namespace Refashion.Database
                 CommandBuilder commandBuilder = new CommandBuilder("INSERT INTO sellers ");
                 commandBuilder.AddInsertParameters(sellerParameters);
 
-                /*
-                Dictionary<string, List<string>> sellerValues = new Dictionary<string, List<string>>();
-
-                foreach (string str in sellerParameters)
-                {
-                    sellerValues.Add(str, new List<string>());
-                }
-
-                foreach (Seller seller in sellers) 
-                {
-                    sellerValues["name"].Add(seller.Name);
-                    sellerValues["email"].Add(seller.Email);
-                    sellerValues["address"].Add(seller.Address);
-                    sellerValues["postnumber"].Add(seller.ZIP.ToString());
-                    sellerValues["city"].Add(seller.City);
-                    sellerValues["phonenumber"].Add(seller.PhoneNumber);
-                    sellerValues["woocommerceId"].Add(seller.WooCommerceId.ToString());
-                }
-
-                /* 
-                 * Same as above but with linq
-                 *
-                 sellerValues["name"] = sellers.Select(seller => seller.Name).ToList();
-                sellerValues["email"] = sellers.Select(seller => seller.Email).ToList();
-                sellerValues["address"] = sellers.Select(seller => seller.Address).ToList();
-                sellerValues["postnumber"] = sellers.Select(seller => seller.ZIP.ToString()).ToList();
-                sellerValues["city"] = sellers.Select(seller => seller.City).ToList();
-                sellerValues["phonenumber"] = sellers.Select(seller => seller.PhoneNumber).ToList();
-                sellerValues["woocommerceId"] = sellers.Select(seller => seller.WooCommerceId.ToString()).ToList();
-                */
-
-                //commandBuilder.AddValuesToInsert(sellerValues);
-
                 List<List<string>> rows = new List<List<string>>();
                 foreach (Seller seller in sellers)
                 {
@@ -402,6 +369,11 @@ namespace Refashion.Database
         // TODO: Consider implementing soft delete
         public void Delete_Single(Seller seller)
         {
+            if(seller.Tag == 0)
+            {
+                throw new ArgumentException("Seller must have a valid Tag");
+            }
+
             var con = database.GetConnection();
             try
             {
@@ -431,6 +403,11 @@ namespace Refashion.Database
 
         public void Delete_Multiple(List<Seller> sellers)
         {
+            if(sellers.Any(seller => seller.Tag == 0))
+            {
+                throw new ArgumentException("All sellers must have a valid Tag");
+            }
+
             var con = database.GetConnection();
             try
             {

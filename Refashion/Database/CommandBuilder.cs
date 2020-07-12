@@ -1,6 +1,7 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -91,16 +92,15 @@ namespace Refashion.Database
 
         public void AddInsertParameters(List<string> parameters)
         {
+            if(parameters.Count < 1)
+            {
+                return;
+            }
             Query.Append(" (");
 
-            // Add all parameters, with correctly placed commas
-            Query.Append(parameters[0]);
-            for (int i = 1; i < parameters.Count; i++)
-            {
-                Query.Append("," + parameters[i]);
-            }
-            Query.Append(") VALUES ");
+            Query.Append(string.Join(",", parameters));
 
+            Query.Append(") VALUES ");
         }
 
         public void AddValuesToInsert(List<List<string>> rowValues)
@@ -110,25 +110,30 @@ namespace Refashion.Database
                 return;
             }
 
-            // Create format string
+            string formatString = createFormatString(rowValues[0].Count);
+
+            List<string> rows = new List<string>();
+            foreach (List<string> row in rowValues)
+            {
+                rows.Add(string.Format(formatString, row.ToArray()));
+            }
+
+            Query.Append(string.Join(",", rows));
+            Query.Append(";");
+        }
+
+        private string createFormatString(int numberOfParameters)
+        {
             StringBuilder formatString = new StringBuilder("(");
             List<string> formatParameters = new List<string>();
-            for (int i = 0; i < rowValues[0].Count; i++)
+            for (int i = 0; i < numberOfParameters; i++)
             {
                 formatParameters.Add("'{" + i + "}'");
             }
             formatString.Append(string.Join(",", formatParameters));
             formatString.Append(")");
 
-            List<string> rows = new List<string>();
-            foreach (List<string> row in rowValues)
-            {
-                rows.Add(string.Format(formatString.ToString(), row.ToArray()));
-            }
-
-            Query.Append(string.Join(",", rows));
-            Query.Append(";");
-            /**/
+            return formatString.ToString();
         }
 
 
