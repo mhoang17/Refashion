@@ -21,6 +21,13 @@ namespace Refashion.Database
             Query = new StringBuilder(baseCommand);
         }
 
+        public void CreateCommand(MySqlConnection connection)
+        {
+            Query.Append(";");
+            Command = new MySqlCommand(Query.ToString(), connection);
+            addParameterValues();
+        }
+
         public void AddEqualsParameters(Dictionary<string, string> parameters)
         {
             foreach (KeyValuePair<string, string> parameter in parameters)
@@ -37,17 +44,6 @@ namespace Refashion.Database
             AddParameter("=", parameterName);
             // Save parameter name and value
             parameters.Add(parameterName, parameterValue);
-        }
-
-        public void AddLimit(uint limit)
-        {
-            Query.Append(" LIMIT " + limit.ToString());
-        }
-
-        public void CreateCommand(MySqlConnection connection)
-        {
-            Command = new MySqlCommand(Query.ToString(), connection);
-            addParameterValues();
         }
 
         private void addParameterValues()
@@ -103,6 +99,7 @@ namespace Refashion.Database
             Query.Append(") VALUES ");
         }
 
+        // Needs to be renamed as i can also be used in DELETE operations
         public void AddValuesToInsert(List<List<string>> rowValues)
         {
             if(rowValues.Count < 1)
@@ -119,7 +116,6 @@ namespace Refashion.Database
             }
 
             Query.Append(string.Join(",", rows));
-            Query.Append(";");
         }
 
         private string createFormatString(int numberOfParameters)
@@ -136,10 +132,14 @@ namespace Refashion.Database
             return formatString.ToString();
         }
 
-
         public void UpdateDuplicateKeys()
         {
 
+        }
+
+        public void AddLimit(uint limit)
+        {
+            Query.Append(" LIMIT " + limit.ToString());
         }
     }
 }

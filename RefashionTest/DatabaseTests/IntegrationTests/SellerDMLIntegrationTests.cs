@@ -99,6 +99,7 @@ namespace RefashionTest.DatabaseTests.IntegrationTests
         [TestMethod, TestCategory("IntegrationTest")]
         public void Insert_Single_Runs_Without_Errors()
         {
+            ClearDatabase();
             SellerDML sellerdml = new SellerDML();
             Seller seller = new Seller("TestSeller", "Test", "Test", "Test", 0, "Test", 0);
 
@@ -148,7 +149,7 @@ namespace RefashionTest.DatabaseTests.IntegrationTests
             return seller;
         }
 
-        // Insert_Single Tests
+        // Insert_Multiple Tests
         [TestMethod, TestCategory("IntegrationTest")]
         public void Insert_Multiple_Runs_Without_Errors()
         {
@@ -335,7 +336,7 @@ namespace RefashionTest.DatabaseTests.IntegrationTests
             Assert.AreEqual(expected, actual);
         }
 
-        // Update_Single tests
+        // Update_Multiple tests
         [TestMethod, TestCategory("IntegrationTest")]
         public void Update_Multiple_Given_User_Without_Id_Throws_ArgumentException()
         {

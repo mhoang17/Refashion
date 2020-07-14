@@ -12,13 +12,13 @@ namespace Refashion.Database
 
         void Insert_Single(T element);
 
-        void Delete_Multiple(List<T> element);
+        void Delete_Multiple(List<T> elements);
 
         void Delete_Single(T element);
 
-        List<T> Select_Multiple(string condition);
+        List<T> Select_Multiple(string conditions);
 
-        T Select_Single(string condition);
+        T Select_Single(string conditions);
 
         void Update_Multiple(List<T> element);
 

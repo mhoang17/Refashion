@@ -23,5 +23,20 @@ namespace Refashion
 
         // TODO: If needed: add method that fetches all products with relation to bag
         public List<Product> Products { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Bag bag &&
+                   AddedDate.ToString() == bag.AddedDate.ToString() &&
+                   SellerId == bag.SellerId;
+        }
+
+        public override int GetHashCode()
+        {
+            int hashCode = -593057844;
+            hashCode = hashCode * -1521134295 + AddedDate.GetHashCode();
+            hashCode = hashCode * -1521134295 + SellerId.GetHashCode();
+            return hashCode;
+        }
     }
 }

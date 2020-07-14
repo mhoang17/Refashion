@@ -201,7 +201,7 @@ namespace Refashion.Database
             }
         }
 
-        // Take max_allowed_packet into account
+        // TODO: Take max_allowed_packet into account
         public void Insert_Multiple(List<Seller> sellers)
         {
             var con = database.GetConnection();
