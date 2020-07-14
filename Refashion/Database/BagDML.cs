@@ -18,7 +18,7 @@ namespace Refashion.Database
         }
         public void Delete_Multiple(List<Bag> bags)
         {
-            if(bags.Any(bag => bag.Id == 0))
+            if(bags.Any(bag => bag.BagID == 0))
             {
                 throw new ArgumentException("All Bags must have a valid Id");
             }
@@ -29,7 +29,7 @@ namespace Refashion.Database
 
                 commandBuilder.AddValuesToInsert(new List<List<string>>
                 {
-                    bags.Select(bag => bag.Id.ToString()).ToList()
+                    bags.Select(bag => bag.BagID.ToString()).ToList()
                 });
 
                 con.Open();
@@ -53,7 +53,7 @@ namespace Refashion.Database
 
         public void Delete_Single(Bag bag)
         {
-            if(bag.Id == 0)
+            if(bag.BagID == 0)
             {
                 throw new ArgumentException("Bag must have a valid Id");
             }
@@ -65,7 +65,7 @@ namespace Refashion.Database
 
                 CommandBuilder commandBuilder = new CommandBuilder("DELETE FROM bags WHERE ");
 
-                commandBuilder.AddEqualsParameter("id", bag.Id.ToString());
+                commandBuilder.AddEqualsParameter("id", bag.BagID.ToString());
 
                 commandBuilder.CreateCommand(con);
 
@@ -74,7 +74,7 @@ namespace Refashion.Database
                 bool querySuccess = commandBuilder.Command.ExecuteNonQuery() > 0;
 
                 Console.WriteLine("Success: " + querySuccess.ToString());
-                Console.WriteLine("Deleted bag with id: " + bag.Id.ToString());
+                Console.WriteLine("Deleted bag with id: " + bag.BagID.ToString());
 
             }
             catch (Exception e)
@@ -163,8 +163,8 @@ namespace Refashion.Database
         {
             List<string> row = new List<string>()
             {
-                bag.SellerId.ToString(),
-                bag.AddedDate.ToString("yyyy-MM-dd H:mm:ss")
+                bag.SellerTag.ToString(),
+                bag.RegistrationDate.ToString("yyyy-MM-dd H:mm:ss")
             };
 
             return row;
@@ -274,7 +274,7 @@ namespace Refashion.Database
 
         public void Update_Multiple(List<Bag> bags)
         {
-            if (bags.FindAll(bag => bag.Id == 0).Count > 0)
+            if (bags.FindAll(bag => bag.BagID == 0).Count > 0)
             {
                 throw new ArgumentException("All bags must have a valid Id");
             }
@@ -333,9 +333,9 @@ namespace Refashion.Database
         {
             List<string> row = new List<string>()
             {
-                bag.Id.ToString(),
-                bag.SellerId.ToString(),
-                bag.AddedDate.ToString("yyyy-MM-dd H:mm:ss")
+                bag.BagID.ToString(),
+                bag.SellerTag.ToString(),
+                bag.RegistrationDate.ToString("yyyy-MM-dd H:mm:ss")
             };
 
             return row;

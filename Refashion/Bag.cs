@@ -24,7 +24,7 @@ namespace Refashion
 
         public Bag(int sellerTag)
         {
-            bagID = 1;
+            bagID = 0;
             this.sellerTag = sellerTag;
             registrationDate = DateTime.Now;
         }
@@ -44,6 +44,21 @@ namespace Refashion
         public override string ToString()
         {
             return BagIDString + " " + RegistrationDateString;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Bag bag &&
+                   sellerTag == bag.sellerTag &&
+                   registrationDate.ToString() == bag.registrationDate.ToString();
+        }
+
+        public override int GetHashCode()
+        {
+            int hashCode = -1858804670;
+            hashCode = hashCode * -1521134295 + sellerTag.GetHashCode();
+            hashCode = hashCode * -1521134295 + registrationDate.GetHashCode();
+            return hashCode;
         }
     }
 }
