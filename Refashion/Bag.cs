@@ -8,35 +8,42 @@ namespace Refashion
 {
     public class Bag
     {
-        public Bag(int sellerId) : this(0, sellerId, DateTime.Now) { }
+        // Field
+        private int bagID;
+        private int sellerTag;
+        private DateTime registrationDate;
 
-        public Bag(int id, int sellerId, DateTime addedDate)
+        // Constructors
+        // This one is used for databse interaction
+        public Bag(int bagID, int sellerTag, DateTime registrationDate)
         {
-            Id = id;
-            SellerId = sellerId;
-            AddedDate = addedDate;
+            this.bagID = bagID;
+            this.sellerTag = sellerTag;
+            this.registrationDate = registrationDate;
         }
 
-        public int Id { get; set; }
-        public DateTime AddedDate { get; set; }
-        public int SellerId { get; set; }
-
-        // TODO: If needed: add method that fetches all products with relation to bag
-        public List<Product> Products { get; set; }
-
-        public override bool Equals(object obj)
+        public Bag(int sellerTag)
         {
-            return obj is Bag bag &&
-                   AddedDate.ToString() == bag.AddedDate.ToString() &&
-                   SellerId == bag.SellerId;
+            bagID = 1;
+            this.sellerTag = sellerTag;
+            registrationDate = DateTime.Now;
         }
 
-        public override int GetHashCode()
+        public int BagID { get { return bagID; } }
+        public string BagIDString {
+            get
+            {
+                int tagLength = 5;
+
+                return TagManipulator.Instance.tagExtender(tagLength, bagID);
+            }
+        }
+        public int SellerTag { get { return sellerTag; } set { sellerTag = value; } }
+        public DateTime RegistrationDate { get { return registrationDate; }}
+        public string RegistrationDateString { get { return "Oprettelse: " + registrationDate; } }
+        public override string ToString()
         {
-            int hashCode = -593057844;
-            hashCode = hashCode * -1521134295 + AddedDate.GetHashCode();
-            hashCode = hashCode * -1521134295 + SellerId.GetHashCode();
-            return hashCode;
+            return BagIDString + " " + RegistrationDateString;
         }
     }
 }

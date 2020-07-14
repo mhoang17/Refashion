@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Refashion_WPF_UI"
         mc:Ignorable="d"
-        Title="MainWindow" Height="510.11" Width="817.487">
+        Title="MainWindow" Height="648.274" Width="1106.626">
 
     <Window.Resources>
         <DataTemplate x:Key="SellerTemplate" DataType="{x:Type local:MainWindow}">
