@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Refashion.Database;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -14,13 +15,15 @@ namespace Refashion
         private string city;
         private int zip;
         private string phoneNumber;
+        private int woocommerceId;
         private DateTime joinDate;
+        private SellerDML sellerDML = new SellerDML();
 
         // Constructors
         // TODO: Have to discuss how we give a user a tag.
 
         // TODO: maybe delete this constructor after discussion.
-        public Seller(int tag, string name, string email, string address, string city, int zip, string phoneNumber)
+        public Seller(int tag, string name, string email, string address, string city, int zip, string phoneNumber, int woocommerceId)
         {
 
             this.tag = tag;
@@ -30,20 +33,22 @@ namespace Refashion
             this.city = city;
             this.zip = zip;
             this.phoneNumber = phoneNumber;
+            this.WooCommerceId = woocommerceId;
 
             joinDate = DateTime.Today;
         }
 
-        public Seller(string name, string email, string address, string city, int zip, string phoneNumber) {
+        public Seller(string name, string email, string address, string city, int zip, string phoneNumber, int woocommerceId) {
 
             // TODO: Have a concrete value and no longer the default value.
-            this.tag = 1;
+            this.tag = 0;
             this.name = name;
             this.email = email;
             this.address = address;
             this.city = city;
             this.zip = zip;
             this.phoneNumber = phoneNumber;
+            this.woocommerceId = woocommerceId;
 
             joinDate = DateTime.Today;
         }
@@ -51,6 +56,15 @@ namespace Refashion
         // Getters and setters
         // You can only retrieve seller tag.
         public int Tag { get { return tag; } }
+        public string TagString
+        {
+            get
+            {
+                int tagLength = 4;
+
+                return TagManipulator.Instance.tagExtender(tagLength, tag);
+            } 
+        }
         public string Name { get { return name; } set { name = value; } }
         public string Email { get { return email; } set { email = value; } }
         public string Address { get { return address; } set { address = value; } }
@@ -58,40 +72,32 @@ namespace Refashion
         public int ZIP { get { return zip; } set { zip = value; } }
         // TODO: discuss if there should be a check on if the number is a certain length.
         public string PhoneNumber { get { return phoneNumber; } set { phoneNumber = value; } }
+        public int WooCommerceId { get { return woocommerceId; } set { woocommerceId = value; } }
         public DateTime JoinDate { get { return joinDate; } set { joinDate = value; } }
+        public string JoinDateString { get { return "Oprettelse: " + joinDate; } }
+
+        public void addSellerDB()
+        {
+            sellerDML.Insert_Single(this);
+            Seller newSeller = sellerDML.Select_Single("email:" + email);
+            tag = newSeller.tag;
+
+            WooCommerceConnection.Instance.InsertTagWC(this);
+        }
+
+        public void updateSellerDB() {
+            sellerDML.Update_Single(this);
+        }
+
+        public void deleteSellerDB() {
+            sellerDML.Delete_Single(this);
+            WooCommerceConnection.Instance.DeleteTagWC(this);
+        }
+
 
         public override string ToString()
         {
-            string tagString = tagExtender();
-            
-            return tagString + " " + name;
-        }
-
-        public string tagExtender()
-        {
-            int tagLength = 4;
-            string sellerTagString = tag.ToString();
-
-
-            // Check if it has the correct length
-            if (sellerTagString.Length < tagLength)
-            {
-
-                int count = sellerTagString.Length;
-                string placeholder = "";
-
-                while (count < tagLength)
-                {
-                    placeholder += "0";
-                    count++;
-                }
-
-                sellerTagString = placeholder + sellerTagString;
-            }
-
-            sellerTagString += "#";
-
-            return sellerTagString;
+            return TagString + " " + name;
         }
 
         public override bool Equals(object obj)

@@ -29,6 +29,7 @@ namespace Refashion_WPF_UI
     {
         private SellerDML sellerDML;
         private List<Seller> sellers;
+        private Dictionary<int, List<Bag>> sellerBags;
         private string defaultSearchPlaceholder;
 
         public SellerPage()
@@ -41,7 +42,11 @@ namespace Refashion_WPF_UI
 
             sellerListView.ItemsSource = sellers;
 
+            // TODO: need a way to handle the bags connected to a seller. Most Likely, load them in with a hashmap/dictionary for easy access
+            sellerBags = new Dictionary<int, List<Bag>>();
+
             defaultSearchPlaceholder = "Søg...";
+
         }
 
         private void newSellerBtn_Click(object sender, EventArgs e)
@@ -136,6 +141,7 @@ namespace Refashion_WPF_UI
             string city = sellerCityTextBox.Text;
             string zip = sellerZIPTextBox.Text;
             string phoneNumber = sellerPhoneTextBox.Text;
+            string wooCommerceId = "";
 
             if (triggerInformationWarnings(name, email, address, city, zip, phoneNumber))
                 return;
@@ -147,12 +153,14 @@ namespace Refashion_WPF_UI
 
             // Create a seller and them into the database
             // TODO: this is not an optimal way to get the tag from the database
-            Seller newSeller = new Seller(name, email, address, city, int.Parse(zip), phoneNumber);
+            Seller newSeller = new Seller(name, email, address, city, int.Parse(zip), phoneNumber, int.Parse(wooCommerceId));
             newSeller.addSellerDB();
-            newSeller = sellerDML.Select_Single("email:" + email);
 
             // Add the new seller to the local list
             sellers.Add(newSeller);
+
+            // Add seller to the dict
+            sellerBags.Add(newSeller.Tag, new List<Bag>());
 
             // Show all sellers again
             sellerListView.ClearValue(ItemsControl.ItemsSourceProperty);
@@ -180,11 +188,21 @@ namespace Refashion_WPF_UI
             {
                 if (sellerListView.Items.Count > 0 && sellerListView.SelectedItem != null)
                 {
-                    sellerInformation.DataContext = sellerListView.SelectedItem;
+                    Seller currentSeller = (Seller) sellerListView.SelectedItem;
+                    sellerInformation.DataContext = currentSeller;
 
                     // Display seller information
                     newSellerPanel.Visibility = Visibility.Collapsed;
                     sellerInformationPanel.Visibility = Visibility.Visible;
+
+                    // Get the corresponding bags of the seller
+                    List<Bag> bags;
+
+                    if (!sellerBags.TryGetValue(currentSeller.Tag, out bags))
+                        bags = new List<Bag>();
+
+                    sellerBagsComboBox.ClearValue(ItemsControl.ItemsSourceProperty);
+                    sellerBagsComboBox.ItemsSource = bags;
 
                     // If it so happens that a seller was being edited when the selection was made, then hide the edit buttons and make it non-editable
                     finishEditingSeller();
@@ -317,7 +335,7 @@ namespace Refashion_WPF_UI
             seller.City = city;
             seller.ZIP = int.Parse(zip);
             seller.PhoneNumber = phoneNumber;
-            seller.updateSellerDB();
+            //seller.updateSellerDB();
 
             sellers[sellerIdx] = seller;
 
@@ -418,7 +436,7 @@ namespace Refashion_WPF_UI
 
                 // Remove seller from the backend and frontend
                 sellers.Remove(chosenSeller);
-                chosenSeller.deleteSellerDB();
+                //chosenSeller.deleteSellerDB();
 
                 sellerListView.ClearValue(ItemsControl.ItemsSourceProperty);
                 sellerListView.ItemsSource = sellers;
@@ -427,8 +445,6 @@ namespace Refashion_WPF_UI
                 sellerListSearchBar.Text = defaultSearchPlaceholder;
             }
         }
-
-
 
 
         // Methods for the seller searchbar
@@ -479,9 +495,85 @@ namespace Refashion_WPF_UI
             }
         }
 
-        private void sellerAddressTextBox_SourceUpdated(object sender, DataTransferEventArgs e)
-        {
 
+        // Methods for the bag buttons in the seller panel
+        private void addSellerBagBtn_Click(object sender, RoutedEventArgs e)
+        {
+            bagPanel.Visibility = Visibility.Visible;
+            bagTitleLabel.Content = "Ny Pose";
+        }
+        private void sellerBagsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sellerBagsComboBox.SelectedItem != null)
+            {
+                sellerBagContainsPanel.DataContext = sellerBagsComboBox.SelectedItem;
+                deleteSellerBagBtn.Visibility = Visibility.Visible;
+                editSellerBagBtn.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                deleteSellerBagBtn.Visibility = Visibility.Collapsed;
+                editSellerBagBtn.Visibility = Visibility.Collapsed;
+            }
+        }
+        private void deleteSellerBagBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Seller chosenSeller = (Seller)sellerInformation.DataContext;
+
+            // Save to the dict
+            // If the seller has yet to have a bag
+            List<Bag> bags;
+            if (sellerBags.TryGetValue(chosenSeller.Tag, out bags))
+            {
+                bags.Remove((Bag)sellerBagContainsPanel.DataContext);
+                sellerBagsComboBox.ClearValue(ItemsControl.ItemsSourceProperty);
+                sellerBagsComboBox.ItemsSource = bags;
+            }
+        }
+        private void editSellerBagBtn_Click(object sender, RoutedEventArgs e)
+        {
+            bagPanel.Visibility = Visibility.Visible;
+            bagTitleLabel.Content = sellerBagContainsPanel.DataContext;
+        }
+
+
+
+        // Methods for the bag buttons in the bag popup
+        private void cancelBagBtn_Click(object sender, RoutedEventArgs e)
+        {
+            bagPanel.Visibility = Visibility.Collapsed;
+        }
+        private void saveBagBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (bagTitleLabel.Content.Equals("Ny Pose"))
+            {
+                Seller chosenSeller = (Seller)sellerInformation.DataContext;
+
+                Bag newBag = new Bag(chosenSeller.Tag);
+
+                // Save to the dict
+                // If the seller has yet to have a bag
+                List<Bag> bags;
+                if (!sellerBags.TryGetValue(chosenSeller.Tag, out bags))
+                {
+                    bags = new List<Bag>();
+                    bags.Add(newBag);
+                    sellerBags.Add(chosenSeller.Tag, bags);
+                }
+                else
+                {
+                    bags.Add(newBag);
+                }
+
+                sellerBagsComboBox.ClearValue(ItemsControl.ItemsSourceProperty);
+                sellerBagsComboBox.ItemsSource = bags;
+
+                sellerBagsComboBox.SelectedItem = newBag;
+
+                sellerBagContainsPanel.DataContext = newBag;
+            }
+
+            bagPanel.Visibility = Visibility.Collapsed;
         }
     }
 }

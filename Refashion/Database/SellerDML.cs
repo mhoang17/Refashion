@@ -2,13 +2,14 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Refashion.Database
 {
-    public class SellerDML : RefashionDML
+    public class SellerDML : RefashionDML<Seller>
     {
         private MySqlCommand command;
         private DatabaseConnection database;
@@ -52,7 +53,7 @@ namespace Refashion.Database
         public Seller Select_Single(string conditions)
         {
             // empty seller in case query returns nothing
-            Seller seller = new Seller("","","","",0,"");
+            Seller seller = new Seller("","","","",0,"",0);
             MySqlConnection con = database.GetConnection();
             try
             {
@@ -61,13 +62,11 @@ namespace Refashion.Database
 
                 StringBuilder queryBuilder = new StringBuilder(query);
                 Dictionary<string, string> conditionDictionary = ParseConditionsToDictionary(conditions);
-                commandBuilder.AddEqualsParameters(conditionDictionary.Keys.ToList());
+                commandBuilder.AddEqualsParameters(conditionDictionary);
                 // Should only return a single result
                 commandBuilder.AddLimit(1);
 
                 commandBuilder.CreateCommand(con);
-
-                commandBuilder.AddEqualsParameterValues(conditionDictionary);
 
                 con.Open();
 
@@ -102,11 +101,9 @@ namespace Refashion.Database
                 CommandBuilder commandBuilder = new CommandBuilder(query);
 
                 Dictionary<string, string> conditionDictionary = ParseConditionsToDictionary(conditions);
-                commandBuilder.AddLikeParameters(conditionDictionary.Keys.ToList());
+                commandBuilder.AddLikeParameters(conditionDictionary);
 
                 commandBuilder.CreateCommand(con);
-
-                commandBuilder.AddLikeParameterValues(conditionDictionary);
 
                 con.Open();
 
@@ -153,40 +150,6 @@ namespace Refashion.Database
             return conditionDictionary;
         }
 
-        private string CreateLikeParameters(Dictionary<string, string> conditions)
-        {
-            StringBuilder queryBuilder = new StringBuilder();
-
-            if (conditions.Count > 0)
-            {
-                KeyValuePair<string, string> firstCondition = conditions.First();
-
-                queryBuilder.Append(string.Format(" {0} Like @{0}", firstCondition.Key));
-
-                // Remove the condition just added so it is not included in following loop
-                conditions.Remove(firstCondition.Key);
-            }
-            if (conditions.Count > 0)
-            {
-                foreach (KeyValuePair<string, string> conditionPair in conditions)
-                {
-                    queryBuilder.Append(string.Format(" OR {0} LIKE @{0}", conditionPair.Key));
-                }
-            }
-
-            return queryBuilder.ToString();
-        }
-
-        private void AddLikeParameters(Dictionary<string, string> conditions)
-        {
-            foreach (KeyValuePair<string, string> conditionPair in conditions)
-            {
-                Console.WriteLine(conditionPair.Key + " : " + conditionPair.Value);
-                command.Parameters.AddWithValue(conditionPair.Key, "%" + conditionPair.Value + "%");
-                //command.Parameters["@" + conditionPair.Key].Value = conditionPair.Value;
-            }
-        }
-
         private Seller MapToSeller(MySqlDataReader reader)
         {
             int id = reader.GetInt32("id");
@@ -196,8 +159,9 @@ namespace Refashion.Database
             int postnumber = reader.GetInt32("postnumber");
             string city = reader.GetString("city");
             string phonenumber = reader.GetString("phonenumber");
+            int wooCommerceId = reader.GetInt32("woocommerceId");
 
-            return new Seller(id, name, email, address, city, postnumber, phonenumber);
+            return new Seller(id, name, email, address, city, postnumber, phonenumber, wooCommerceId);
         }
 
         public void Insert_Single(Seller seller)
@@ -207,8 +171,8 @@ namespace Refashion.Database
             {
                 con.Open();
 
-                var query = "INSERT INTO sellers (name, email, address, postnumber, city, phonenumber) " +
-                                         "VALUES (@name, @email, @address, @postnumber, @city, @phonenumber)";
+                var query = "INSERT INTO sellers (name, email, address, postnumber, city, phonenumber, woocommerceId) " +
+                                         "VALUES (@name, @email, @address, @postnumber, @city, @phonenumber, @woocommerceId)";
                 command = new MySqlCommand(query, con);
 
                 addParameter("name", MySqlDbType.String, seller.Name);
@@ -217,6 +181,7 @@ namespace Refashion.Database
                 addParameter("postnumber", MySqlDbType.Int32, seller.ZIP.ToString());
                 addParameter("city", MySqlDbType.String, seller.City);
                 addParameter("phonenumber", MySqlDbType.String, seller.PhoneNumber.ToString());
+                addParameter("woocommerceId", MySqlDbType.Int32, seller.WooCommerceId.ToString());
 
                 bool querySuccess = command.ExecuteNonQuery() > 0;
                 long id = command.LastInsertedId;
@@ -236,44 +201,49 @@ namespace Refashion.Database
             }
         }
 
-        // Take max_allowed_packet into account
+        // TODO: Take max_allowed_packet into account
         public void Insert_Multiple(List<Seller> sellers)
         {
             var con = database.GetConnection();
             try
             {
-                string query = "INSERT INTO sellers (name, email, address, postnumber, city, phonenumber) VALUES ";
-                StringBuilder queryBuilder = new StringBuilder(query);
+                // (name, email, address, postnumber, city, phonenumber, woocommerceId)
+                //VALUES
 
-                List<string> sellerRows = new List<string>();
+                List<string> sellerParameters = new List<string>()
+                {
+                    "name",
+                    "email",
+                    "address",
+                    "postnumber",
+                    "city",
+                    "phonenumber",
+                    "woocommerceId"
+                };
+
+                CommandBuilder commandBuilder = new CommandBuilder("INSERT INTO sellers ");
+                commandBuilder.AddInsertParameters(sellerParameters);
+
+                List<List<string>> rows = new List<List<string>>();
                 foreach (Seller seller in sellers)
-                {   
-                    sellerRows.Add(string.Format("('{0}','{1}','{2}','{3}','{4}','{5}')",
-                        MySqlHelper.EscapeString(seller.Name),
-                        MySqlHelper.EscapeString(seller.Email),
-                        MySqlHelper.EscapeString(seller.Address),
-                        seller.ZIP,
-                        MySqlHelper.EscapeString(seller.City),
-                        MySqlHelper.EscapeString(seller.PhoneNumber.ToString())
-                        ));
+                {
+                    rows.Add(mapSellerToStrings(seller));
                 }
 
-                queryBuilder.Append(string.Join(",", sellerRows));
-                queryBuilder.Append(";");
-
+                commandBuilder.AddValuesToInsert(rows);
                 con.Open();
 
-                command = new MySqlCommand(queryBuilder.ToString(), con);
-                command.CommandType = CommandType.Text;
+                commandBuilder.CreateCommand(con);
+                commandBuilder.Command.CommandType = CommandType.Text;
 
-                bool querySuccess = command.ExecuteNonQuery() > 0;
+                bool querySuccess = commandBuilder.Command.ExecuteNonQuery() > 0;
 
                 Console.WriteLine("Success: " + querySuccess.ToString());
-                Console.WriteLine("Inserted " + sellerRows.Count + " sellers ");
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.ToString());
+                throw (e);
             }
             finally
             {
@@ -281,14 +251,34 @@ namespace Refashion.Database
             }
         }
 
+        private List<string> mapSellerToStrings(Seller seller)
+        {
+            List<string> row = new List<string>()
+            {
+                seller.Name,
+                seller.Email,
+                seller.Address,
+                seller.ZIP.ToString(),
+                seller.City,
+                seller.PhoneNumber,
+                seller.WooCommerceId.ToString()
+            };
+
+            return row;
+        }
+
         public void Update_Single(Seller seller)
         {
             var con = database.GetConnection();
+            if(seller.Tag == 0)
+            {
+                throw new ArgumentException("Seller must have a valid Tag to be updated");
+            }
             try
             {
                 con.Open();
 
-                var query = "UPDATE sellers SET name=@name, email=@email, address=@email, postnumber=@postnumber, city=@city, phonenumber=@phonenumber " +
+                var query = "UPDATE sellers SET name=@name, email=@email, address=@address, postnumber=@postnumber, city=@city, phonenumber=@phonenumber, woocommerceId=@woocommerceId " +
                             "WHERE id=@id";
                 command = new MySqlCommand(query, con);
 
@@ -298,6 +288,7 @@ namespace Refashion.Database
                 addParameter("postnumber", MySqlDbType.Int32, seller.ZIP.ToString());
                 addParameter("city", MySqlDbType.String, seller.City);
                 addParameter("phonenumber", MySqlDbType.String, seller.PhoneNumber.ToString());
+                addParameter("woocommerceId", MySqlDbType.Int32, seller.WooCommerceId.ToString());
                 addParameter("id", MySqlDbType.Int32, seller.Tag.ToString());
 
                 bool querySuccess = command.ExecuteNonQuery() > 0;
@@ -319,44 +310,46 @@ namespace Refashion.Database
 
         public void Update_Multiple(List<Seller> sellers)
         {
+            if (sellers.FindAll(seller => seller.Tag == 0).Count > 0)
+            {
+                throw new ArgumentException("All sellers must have a valid tag");
+            }
+
             var con = database.GetConnection();
             try
             {
-                string query = "INSERT INTO sellers (id, name, email, address, postnumber, city, phonenumber) VALUES ";
-                StringBuilder queryBuilder = new StringBuilder(query);
+                List<string> sellerParameters = new List<string>()
+                {
+                    "id",
+                    "name",
+                    "email",
+                    "address",
+                    "postnumber",
+                    "city",
+                    "phonenumber",
+                    "woocommerceId"
+                };
 
-                List<string> sellerRows = new List<string>();
+                CommandBuilder commandBuilder = new CommandBuilder("INSERT INTO sellers ");
+                commandBuilder.AddInsertParameters(sellerParameters);
+
+                List<List<string>> rows = new List<List<string>>();
                 foreach (Seller seller in sellers)
                 {
-                    sellerRows.Add(string.Format("('{0}','{1}','{2}','{3}','{4}','{5}','{6}')",
-                        seller.Tag,
-                        MySqlHelper.EscapeString(seller.Name),
-                        MySqlHelper.EscapeString(seller.Email),
-                        MySqlHelper.EscapeString(seller.Address),
-                        seller.ZIP,
-                        MySqlHelper.EscapeString(seller.City),
-                        MySqlHelper.EscapeString(seller.PhoneNumber.ToString())
-                        ));
+                    rows.Add(mapSellerWithTagToStrings(seller));
                 }
 
-                queryBuilder.Append(string.Join(",", sellerRows));
-                queryBuilder.Append(" ON DUPLICATE KEY UPDATE" +
-                                    "name=VALUEs(name)," +
-                                    "email=VALUES(email)," +
-                                    "address=VALUES(address)," +
-                                    "postnumber=VALUES(postnumber)," +
-                                    "city=VALUES(city)," +
-                                    "phonenumber=VALUES(phonenumber);");
+                commandBuilder.AddValuesToInsert(rows);
+                commandBuilder.UpdateDuplicateKeys();
 
                 con.Open();
 
-                command = new MySqlCommand(queryBuilder.ToString(), con);
-                command.CommandType = CommandType.Text;
+                commandBuilder.CreateCommand(con);
+                commandBuilder.Command.CommandType = CommandType.Text;
 
-                bool querySuccess = command.ExecuteNonQuery() > 0;
+                bool querySuccess = commandBuilder.Command.ExecuteNonQuery() > 0;
 
                 Console.WriteLine("Success: " + querySuccess.ToString());
-                Console.WriteLine("Updated " + sellerRows.Count + " sellers ");
             }
             catch (Exception e)
             {
@@ -368,9 +361,31 @@ namespace Refashion.Database
             }
         }
 
+        private List<string> mapSellerWithTagToStrings(Seller seller)
+        {
+            List<string> row = new List<string>()
+            {
+                seller.Tag.ToString(),
+                seller.Name,
+                seller.Email,
+                seller.Address,
+                seller.ZIP.ToString(),
+                seller.City,
+                seller.PhoneNumber,
+                seller.WooCommerceId.ToString()
+            };
+
+            return row;
+        }
+
         // TODO: Consider implementing soft delete
         public void Delete_Single(Seller seller)
         {
+            if(seller.Tag == 0)
+            {
+                throw new ArgumentException("Seller must have a valid Tag");
+            }
+
             var con = database.GetConnection();
             try
             {
@@ -400,6 +415,11 @@ namespace Refashion.Database
 
         public void Delete_Multiple(List<Seller> sellers)
         {
+            if(sellers.Any(seller => seller.Tag == 0))
+            {
+                throw new ArgumentException("All sellers must have a valid Tag");
+            }
+
             var con = database.GetConnection();
             try
             {

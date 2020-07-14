@@ -6,24 +6,24 @@ using System.Threading.Tasks;
 
 namespace Refashion.Database
 {
-    interface RefashionDML
+    interface RefashionDML<T>
     {
-        void Insert_Multiple(List<Seller> sellers);
+        void Insert_Multiple(List<T> elements);
 
-        void Insert_Single(Seller seller);
+        void Insert_Single(T element);
 
-        void Delete_Multiple(List<Seller> seller);
+        void Delete_Multiple(List<T> elements);
 
-        void Delete_Single(Seller seller);
+        void Delete_Single(T element);
 
-        List<Seller> Select_Multiple(string condition);
+        List<T> Select_Multiple(string conditions);
 
-        Seller Select_Single(string condition);
+        T Select_Single(string conditions);
 
-        void Update_Multiple(List<Seller> sellers);
+        void Update_Multiple(List<T> element);
 
-        void Update_Single(Seller seller);
+        void Update_Single(T element);
 
-        List<Seller> GetAll();
+        List<T> GetAll();
     }
 }

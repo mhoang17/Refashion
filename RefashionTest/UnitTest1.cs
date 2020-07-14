@@ -10,7 +10,7 @@ namespace RefashionTest
         [TestMethod]
         public void TestMethod1()
         {
-            Seller seller = new Seller("Tom", "mail", "addresse", "city", 1234, "123456789");
+            Seller seller = new Seller("Tom", "mail", "addresse", "city", 1234, "123456789", 0);
 
             Assert.AreEqual("addresse", seller.Address);
         }

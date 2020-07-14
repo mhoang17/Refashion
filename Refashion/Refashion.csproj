@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="MySql.Data" Version="8.0.20" />
+    <PackageReference Include="WooCommerceNET" Version="0.8.2" />
   </ItemGroup>
 
   <ItemGroup>

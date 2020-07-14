@@ -1,0 +1,41 @@
+﻿<UserControl x:Class="Refashion_WPF_UI.BagPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Refashion_WPF_UI"
+             mc:Ignorable="d" Height="581.977" Width="1003.5">
+    <Grid x:Name="bagGridPanel" Background="White">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="38*"/>
+            <RowDefinition Height="69*"/>
+            <RowDefinition Height="374*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="67*"/>
+            <ColumnDefinition Width="197*"/>
+            <ColumnDefinition Width="546*"/>
+        </Grid.ColumnDefinitions>
+
+        <ListView x:Name="productListView" HorizontalAlignment="Left" Height="377" VerticalAlignment="Top" Width="192" Margin="15.667,44.667,0,0" Grid.Row="2" Grid.Column="1">
+            <ListView.Resources>
+                <Style TargetType="GridViewColumnHeader">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                </Style>
+            </ListView.Resources>
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <TextBox x:Name="productListSearchBar" HorizontalAlignment="Left" Height="23" Margin="15.667,16.667,0,0" TextWrapping="Wrap" Text="Søg..." VerticalAlignment="Top" Width="192" Grid.Row="2" Grid.Column="1"/>
+        <Button x:Name="newProductBtn" Content="Ny Vare" HorizontalAlignment="Left" Margin="15.667,421.667,0,0" VerticalAlignment="Top" Width="192" Height="21" Grid.Row="2" Grid.Column="1"/>
+        <Label x:Name="bagIDLabel" Content="BagID" HorizontalAlignment="Left" Margin="15.333,16,0,0" VerticalAlignment="Top" Width="265" FontWeight="Bold" FontSize="25" Grid.ColumnSpan="2" Height="43" Grid.Column="1" Grid.Row="1"/>
+        <Label x:Name="bagSeparator" Content="" Grid.Column="1" HorizontalAlignment="Left" Margin="15.667,70,0,0" VerticalAlignment="Top" Background="#FF9B9B9B" Width="894" Height="3" Grid.ColumnSpan="2" Grid.Row="1"/>
+        <Grid x:Name="sellerInformationPanel" Grid.Column="2" HorizontalAlignment="Left" Height="426" Margin="17.667,16.667,0,0" Grid.Row="2" VerticalAlignment="Top" Width="648" Visibility="Visible" Background="White">
+            <Button x:Name="saveBagBtn" Content="Gem Pose" HorizontalAlignment="Left" Margin="465,395,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="0.356,-11.952" Click="saveBagBtn_Click"/>
+            <Button x:Name="cancelBagBtn" Content="Annuller" HorizontalAlignment="Left" Margin="563,395,0,0" VerticalAlignment="Top" Width="75" Click="cancelBagBtn_Click"/>
+        </Grid>
+    </Grid>
+</UserControl>

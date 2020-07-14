@@ -1,6 +1,7 @@
 ﻿using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,62 +13,63 @@ namespace Refashion.Database
         public StringBuilder Query { get; private set; }
         public MySqlCommand Command { get; private set; }
         private bool hasFirstParameter = false;
-        private List<string> parameters = new List<string>();
+        //private List<string> parameters = new List<string>();
+        private Dictionary<string, string> parameters = new Dictionary<string, string>();
+        private List<string> parametersToInsert;
 
         public CommandBuilder(string baseCommand)
         {
             Query = new StringBuilder(baseCommand);
         }
 
-        public void AddEqualsParameters(List<string> parameters)
+        public void CreateCommand(MySqlConnection connection)
         {
-            foreach (string parameter in parameters)
+            Query.Append(";");
+            Command = new MySqlCommand(Query.ToString(), connection);
+            addParameterValues();
+        }
+
+        public void AddEqualsParameters(Dictionary<string, string> parameters)
+        {
+            foreach (KeyValuePair<string, string> parameter in parameters)
             {
-                AddEqualParameter(parameter);
+                AddEqualsParameter(parameter.Key, parameter.Value);
             }
         }
 
         // Adds an equal parameter to query
         // Might be vulnerable to SQL injection
-        public void AddEqualParameter(string parameterName)
+        public void AddEqualsParameter(string parameterName, string parameterValue)
         {
+            // Add parameter to query
             AddParameter("=", parameterName);
+            // Save parameter name and value
+            parameters.Add(parameterName, parameterValue);
         }
 
-        public void AddLimit(uint limit)
-        {
-            Query.Append(" LIMIT " + limit.ToString());
-        }
-
-        public void CreateCommand(MySqlConnection connection)
-        {
-            Command = new MySqlCommand(Query.ToString(), connection);
-        }
-
-        public void AddEqualsParameterValues(Dictionary<string, string> parameters)
+        private void addParameterValues()
         {
             foreach (KeyValuePair<string, string> parameter in parameters)
             {
-                AddEqualsParameterValue(parameter.Key, parameter.Value);
+                Command.Parameters.AddWithValue(parameter.Key, parameter.Value);
             }
-        }
-        public void AddEqualsParameterValue(string parameterName, string value)
-        {
-            Command.Parameters.AddWithValue(parameterName, value);
         }
 
         // Almost same logic as equal parameters
-        public void AddLikeParameters(List<string> parameters)
+        public void AddLikeParameters(Dictionary<string, string> parameters)
         {
-            foreach (string parameter in parameters)
+            foreach (KeyValuePair<string, string> parameter in parameters)
             {
-                AddLikeParameter(parameter);
+                AddLikeParameter(parameter.Key, parameter.Value);
             }
         }
 
-        public void AddLikeParameter(string parameterName)
+        public void AddLikeParameter(string parameterName, string parameterValue)
         {
+            // Add parameter to query
             AddParameter("LIKE", parameterName);
+            // Save parameter name and value
+            parameters.Add(parameterName, "%" + parameterValue + "%");
         }
 
         public void AddParameter(string parameterType, string parameterName)
@@ -83,21 +85,77 @@ namespace Refashion.Database
             }
 
             Query.Append(string.Format(" {0} " + parameterType + " @{0}", parameterName));
-
-            parameters.Add(parameterName);
         }
 
-        public void AddLikeParameterValues(Dictionary<string, string> parameters)
+        public void AddInsertParameters(List<string> parameters)
         {
-            foreach (KeyValuePair<string, string> parameter in parameters)
+            if(parameters.Count < 1)
             {
-                AddLikeParameterValue(parameter.Key, parameter.Value);
+                return;
             }
+            Query.Append(" (");
+
+            Query.Append(string.Join(",", parameters));
+
+            Query.Append(") VALUES ");
+
+            parametersToInsert = parameters;
         }
 
-        public void AddLikeParameterValue(string parameterName, string value)
+        // Needs to be renamed as i can also be used in DELETE operations
+        public void AddValuesToInsert(List<List<string>> rowValues)
         {
-            Command.Parameters.AddWithValue(parameterName, "%" + value + "%");
+            if(rowValues.Count < 1)
+            {
+                return;
+            }
+
+            string formatString = createFormatString(rowValues[0].Count);
+
+            List<string> rows = new List<string>();
+            foreach (List<string> row in rowValues)
+            {
+                rows.Add(string.Format(formatString, row.ToArray()));
+            }
+
+            Query.Append(string.Join(",", rows));
+        }
+
+        private string createFormatString(int numberOfParameters)
+        {
+            StringBuilder formatString = new StringBuilder("(");
+            List<string> formatParameters = new List<string>();
+            for (int i = 0; i < numberOfParameters; i++)
+            {
+                formatParameters.Add("'{" + i + "}'");
+            }
+            formatString.Append(string.Join(",", formatParameters));
+            formatString.Append(")");
+
+            return formatString.ToString();
+        }
+
+        public void UpdateDuplicateKeys()
+        {
+            if(parametersToInsert == null)
+            {
+                return;
+            }
+
+            StringBuilder parameterBuilder = new StringBuilder(" ON DUPLICATE KEY UPDATE ");
+            List<string> parameterStrings = new List<string>();
+            foreach(string parameter in parametersToInsert)
+            {
+                parameterStrings.Add(string.Format("{0}=VALUES({0})", parameter));
+            }
+            parameterBuilder.Append(string.Join(",", parameterStrings));
+
+            Query.Append(parameterBuilder.ToString());
+        }
+
+        public void AddLimit(uint limit)
+        {
+            Query.Append(" LIMIT " + limit.ToString());
         }
     }
 }
