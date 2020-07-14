@@ -299,11 +299,8 @@ namespace Refashion.Database
                 }
 
                 commandBuilder.AddValuesToInsert(rows);
+                commandBuilder.UpdateDuplicateKeys();
 
-                commandBuilder.Query.Append(" ON DUPLICATE KEY UPDATE " +
-                                    "id=VALUES(id)," +
-                                    "sellerId=VALUES(sellerId)," +
-                                    "added_at=VALUES(added_at)");
                 con.Open();
 
                 commandBuilder.CreateCommand(con);

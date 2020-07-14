@@ -318,43 +318,38 @@ namespace Refashion.Database
             var con = database.GetConnection();
             try
             {
-                string query = "INSERT INTO sellers (id, name, email, address, postnumber, city, phonenumber, woocommerceId) VALUES ";
-                StringBuilder queryBuilder = new StringBuilder(query);
+                List<string> sellerParameters = new List<string>()
+                {
+                    "id",
+                    "name",
+                    "email",
+                    "address",
+                    "postnumber",
+                    "city",
+                    "phonenumber",
+                    "woocommerceId"
+                };
 
-                List<string> sellerRows = new List<string>();
+                CommandBuilder commandBuilder = new CommandBuilder("INSERT INTO sellers ");
+                commandBuilder.AddInsertParameters(sellerParameters);
+
+                List<List<string>> rows = new List<List<string>>();
                 foreach (Seller seller in sellers)
                 {
-                    sellerRows.Add(string.Format("('{0}','{1}','{2}','{3}','{4}','{5}','{6}','{7}')",
-                        seller.Tag,
-                        MySqlHelper.EscapeString(seller.Name),
-                        MySqlHelper.EscapeString(seller.Email),
-                        MySqlHelper.EscapeString(seller.Address),
-                        seller.ZIP,
-                        MySqlHelper.EscapeString(seller.City),
-                        MySqlHelper.EscapeString(seller.PhoneNumber.ToString()),
-                        seller.WooCommerceId
-                        ));
+                    rows.Add(mapSellerWithTagToStrings(seller));
                 }
 
-                queryBuilder.Append(string.Join(",", sellerRows));
-                queryBuilder.Append(" ON DUPLICATE KEY UPDATE " +
-                                    "name=VALUEs(name)," +
-                                    "email=VALUES(email)," +
-                                    "address=VALUES(address)," +
-                                    "postnumber=VALUES(postnumber)," +
-                                    "city=VALUES(city)," +
-                                    "phonenumber=VALUES(phonenumber)," +
-                                    "woocommerceId=VALUES(woocommerceId);");
+                commandBuilder.AddValuesToInsert(rows);
+                commandBuilder.UpdateDuplicateKeys();
 
                 con.Open();
 
-                command = new MySqlCommand(queryBuilder.ToString(), con);
-                command.CommandType = CommandType.Text;
+                commandBuilder.CreateCommand(con);
+                commandBuilder.Command.CommandType = CommandType.Text;
 
-                bool querySuccess = command.ExecuteNonQuery() > 0;
+                bool querySuccess = commandBuilder.Command.ExecuteNonQuery() > 0;
 
                 Console.WriteLine("Success: " + querySuccess.ToString());
-                Console.WriteLine("Updated " + sellerRows.Count + " sellers ");
             }
             catch (Exception e)
             {
@@ -364,6 +359,23 @@ namespace Refashion.Database
             {
                 con.Close();
             }
+        }
+
+        private List<string> mapSellerWithTagToStrings(Seller seller)
+        {
+            List<string> row = new List<string>()
+            {
+                seller.Tag.ToString(),
+                seller.Name,
+                seller.Email,
+                seller.Address,
+                seller.ZIP.ToString(),
+                seller.City,
+                seller.PhoneNumber,
+                seller.WooCommerceId.ToString()
+            };
+
+            return row;
         }
 
         // TODO: Consider implementing soft delete

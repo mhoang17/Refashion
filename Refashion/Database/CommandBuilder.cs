@@ -15,6 +15,7 @@ namespace Refashion.Database
         private bool hasFirstParameter = false;
         //private List<string> parameters = new List<string>();
         private Dictionary<string, string> parameters = new Dictionary<string, string>();
+        private List<string> parametersToInsert;
 
         public CommandBuilder(string baseCommand)
         {
@@ -97,6 +98,8 @@ namespace Refashion.Database
             Query.Append(string.Join(",", parameters));
 
             Query.Append(") VALUES ");
+
+            parametersToInsert = parameters;
         }
 
         // Needs to be renamed as i can also be used in DELETE operations
@@ -134,7 +137,20 @@ namespace Refashion.Database
 
         public void UpdateDuplicateKeys()
         {
+            if(parametersToInsert == null)
+            {
+                return;
+            }
 
+            StringBuilder parameterBuilder = new StringBuilder(" ON DUPLICATE KEY UPDATE ");
+            List<string> parameterStrings = new List<string>();
+            foreach(string parameter in parametersToInsert)
+            {
+                parameterStrings.Add(string.Format("{0}=VALUES({0})", parameter));
+            }
+            parameterBuilder.Append(string.Join(",", parameterStrings));
+
+            Query.Append(parameterBuilder.ToString());
         }
 
         public void AddLimit(uint limit)
