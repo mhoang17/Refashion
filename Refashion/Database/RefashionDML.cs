@@ -20,7 +20,7 @@ namespace Refashion.Database
 
         T Select_Single(string conditions);
 
-        void Update_Multiple(List<T> element);
+        void Update_Multiple(List<T> elements);
 
         void Update_Single(T element);
 

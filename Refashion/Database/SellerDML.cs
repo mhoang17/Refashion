@@ -11,12 +11,9 @@ namespace Refashion.Database
 {
     public class SellerDML : RefashionDML<Seller>
     {
-        private MySqlCommand command;
-        private DatabaseConnection database;
         private BaseDML<Seller> baseDML;
         public SellerDML()
         {
-            database = new DatabaseConnection();
             baseDML = new BaseDML<Seller>("sellers", new List<string>()
                 {
                     "name",
@@ -29,7 +26,6 @@ namespace Refashion.Database
                 });
         }
 
-        // TODO: create abstraction for try-catch 
         public List<Seller> GetAll()
         {
             return baseDML.GetAll(MapToSeller);
@@ -40,9 +36,9 @@ namespace Refashion.Database
             // empty seller in case query returns nothing
             Seller seller = new Seller("", "", "", "", 0, "", 0);
 
-            Dictionary<string, string> conditionDictionary = ParseConditionsToDictionary(conditions);
+            //Dictionary<string, string> conditionDictionary = ParseConditionsToDictionary(conditions);
 
-            seller = baseDML.Select_Multiple(conditionDictionary, MapToSeller, 1).First();
+            seller = baseDML.Select_Multiple(conditions, MapToSeller, 1).First();
 
             return seller;
         }
@@ -50,9 +46,9 @@ namespace Refashion.Database
         // TODO: Refactor as this contains same logic as Select_Single but without limit
         public List<Seller> Select_Multiple(string conditions)
         {
-            Dictionary<string, string> conditionDictionary = ParseConditionsToDictionary(conditions);
+            //Dictionary<string, string> conditionDictionary = ParseConditionsToDictionary(conditions);
 
-            List<Seller> sellers = baseDML.Select_Multiple(conditionDictionary, MapToSeller);
+            List<Seller> sellers = baseDML.Select_Multiple(conditions, MapToSeller);
 
             return sellers;
         }

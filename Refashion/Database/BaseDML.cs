@@ -133,7 +133,7 @@ namespace Refashion.Database
             }
         }
 
-        public List<T> Select_Multiple(Dictionary<string, string> conditions, MapToElement mapFunction, uint limit = 100)
+        public List<T> Select_Multiple(string conditions, MapToElement mapFunction, uint limit = 100)
         {
             List<T> result = new List<T>();
             MySqlConnection con = database.GetConnection();
@@ -142,8 +142,8 @@ namespace Refashion.Database
                 string query = "SELECT * FROM " + table + " WHERE";
                 CommandBuilder commandBuilder = new CommandBuilder(query);
 
-                //Dictionary<string, string> conditionDictionary = ParseConditionsToDictionary(conditions);
-                commandBuilder.AddLikeParameters(conditions);
+                Dictionary<string, string> conditionDictionary = ParseConditionsToDictionary(conditions);
+                commandBuilder.AddLikeParameters(conditionDictionary);
                 commandBuilder.AddLimit(limit);
                 commandBuilder.CreateCommand(con);
 
@@ -212,6 +212,29 @@ namespace Refashion.Database
             {
                 con.Close();
             }
+        }
+
+        private Dictionary<string, string> ParseConditionsToDictionary(string conditions)
+        {
+            Dictionary<string, string> conditionDictionary = new Dictionary<string, string>();
+
+            List<string> conditionStrings = new List<string>(conditions.Split(','));
+            foreach (string condition in conditionStrings)
+            {
+                List<string> items = new List<string>(condition.Split(':'));
+                if (items.Count > 2)
+                {
+                    // incorrect format
+                    throw new ArgumentException("Conditions must be of the form 'ConditionName:Value'");
+                }
+
+                string rowName = items[0].Trim();
+                string rowValue = items[1].Trim();
+
+                conditionDictionary.Add(rowName, rowValue);
+            }
+
+            return conditionDictionary;
         }
     }
 }

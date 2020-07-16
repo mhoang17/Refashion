@@ -10,12 +10,10 @@ namespace Refashion.Database
 {
     public class BagDML : RefashionDML<Bag>
     {
-        private DatabaseConnection database;
         private BaseDML<Bag> baseDML;
 
         public BagDML()
         {
-            database = new DatabaseConnection();
             baseDML = new BaseDML<Bag>("bags", new List<string>()
                 {
                     "sellerId",
@@ -73,16 +71,16 @@ namespace Refashion.Database
 
         public List<Bag> Select_Multiple(string conditions)
         {
-            Dictionary<string, string> conditionDictionary = ParseConditionsToDictionary(conditions);
-            List<Bag> bags = baseDML.Select_Multiple(conditionDictionary, mapToBag);
+            //Dictionary<string, string> conditionDictionary = ParseConditionsToDictionary(conditions);
+            List<Bag> bags = baseDML.Select_Multiple(conditions, mapToBag);
             return bags;
         }
 
         public Bag Select_Single(string conditions)
         {
             Bag bag = new Bag(0);
-            Dictionary<string, string> conditionDictionary = ParseConditionsToDictionary(conditions);
-            bag = baseDML.Select_Multiple(conditionDictionary, mapToBag, 1).First();
+            //Dictionary<string, string> conditionDictionary = ParseConditionsToDictionary(conditions);
+            bag = baseDML.Select_Multiple(conditions, mapToBag, 1).First();
 
             return bag;
         }
@@ -99,7 +97,6 @@ namespace Refashion.Database
                 if (items.Count > 2)
                 {
                     // incorrect format
-                    // TODO: Throw correct error type
                     throw new ArgumentException("Conditions must be of the form 'ConditionName:Value'");
                 }
 
