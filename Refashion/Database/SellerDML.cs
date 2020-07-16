@@ -13,116 +13,47 @@ namespace Refashion.Database
     {
         private MySqlCommand command;
         private DatabaseConnection database;
+        private BaseDML<Seller> baseDML;
         public SellerDML()
         {
             database = new DatabaseConnection();
+            baseDML = new BaseDML<Seller>("sellers", new List<string>()
+                {
+                    "name",
+                    "email",
+                    "address",
+                    "postnumber",
+                    "city",
+                    "phonenumber",
+                    "woocommerceId"
+                });
         }
 
         // TODO: create abstraction for try-catch 
         public List<Seller> GetAll()
         {
-            List<Seller> sellers = new List<Seller>();
-            MySqlConnection con = database.GetConnection();
-            try
-            {
-                con.Open();
-
-                string query = "SELECT * FROM sellers";
-
-                command = new MySqlCommand(query, con);
-
-                MySqlDataReader reader = command.ExecuteReader();
-                while (reader.Read())
-                {
-                    sellers.Add(MapToSeller(reader));
-                }
-                reader.Close();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-            finally
-            {
-                con.Close();
-            }
-
-            return sellers;
+            return baseDML.GetAll(MapToSeller);
         }
 
         public Seller Select_Single(string conditions)
         {
             // empty seller in case query returns nothing
-            Seller seller = new Seller("","","","",0,"",0);
-            MySqlConnection con = database.GetConnection();
-            try
-            {
-                string query = "SELECT * FROM sellers WHERE";
-                CommandBuilder commandBuilder = new CommandBuilder(query);
+            Seller seller = new Seller("", "", "", "", 0, "", 0);
 
-                StringBuilder queryBuilder = new StringBuilder(query);
-                Dictionary<string, string> conditionDictionary = ParseConditionsToDictionary(conditions);
-                commandBuilder.AddEqualsParameters(conditionDictionary);
-                // Should only return a single result
-                commandBuilder.AddLimit(1);
+            Dictionary<string, string> conditionDictionary = ParseConditionsToDictionary(conditions);
 
-                commandBuilder.CreateCommand(con);
+            seller = baseDML.Select_Multiple(conditionDictionary, MapToSeller, 1).First();
 
-                con.Open();
-
-                MySqlDataReader reader = commandBuilder.Command.ExecuteReader();
-                if (reader.Read())
-                {
-                    seller = MapToSeller(reader);
-                }
-                reader.Close();
-
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-                throw (e);
-            }
-            finally
-            {
-                con.Close();
-            }
             return seller;
         }
 
         // TODO: Refactor as this contains same logic as Select_Single but without limit
         public List<Seller> Select_Multiple(string conditions)
         {
-            List<Seller> sellers = new List<Seller>();
-            MySqlConnection con = database.GetConnection();
-            try
-            {
-                string query = "SELECT * FROM sellers WHERE";
-                CommandBuilder commandBuilder = new CommandBuilder(query);
+            Dictionary<string, string> conditionDictionary = ParseConditionsToDictionary(conditions);
 
-                Dictionary<string, string> conditionDictionary = ParseConditionsToDictionary(conditions);
-                commandBuilder.AddLikeParameters(conditionDictionary);
+            List<Seller> sellers = baseDML.Select_Multiple(conditionDictionary, MapToSeller);
 
-                commandBuilder.CreateCommand(con);
-
-                con.Open();
-
-                MySqlDataReader reader = commandBuilder.Command.ExecuteReader();
-                while (reader.Read())
-                {
-                    sellers.Add(MapToSeller(reader));
-                }
-                reader.Close();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-                throw (e);
-            }
-            finally
-            {
-                con.Close();
-            }
             return sellers;
         }
 
@@ -137,7 +68,6 @@ namespace Refashion.Database
                 if (items.Count > 2)
                 {
                     // incorrect format
-                    // TODO: Throw correct error type
                     throw new ArgumentException("Conditions must be of the form 'ConditionName:Value'");
                 }
 
@@ -164,91 +94,15 @@ namespace Refashion.Database
             return new Seller(id, name, email, address, city, postnumber, phonenumber, wooCommerceId);
         }
 
-        public void Insert_Single(Seller seller)
+        public int Insert_Single(Seller seller)
         {
-            var con = database.GetConnection();
-            try
-            {
-                con.Open();
-
-                var query = "INSERT INTO sellers (name, email, address, postnumber, city, phonenumber, woocommerceId) " +
-                                         "VALUES (@name, @email, @address, @postnumber, @city, @phonenumber, @woocommerceId)";
-                command = new MySqlCommand(query, con);
-
-                addParameter("name", MySqlDbType.String, seller.Name);
-                addParameter("email", MySqlDbType.String, seller.Email);
-                addParameter("address", MySqlDbType.String, seller.Address);
-                addParameter("postnumber", MySqlDbType.Int32, seller.ZIP.ToString());
-                addParameter("city", MySqlDbType.String, seller.City);
-                addParameter("phonenumber", MySqlDbType.String, seller.PhoneNumber.ToString());
-                addParameter("woocommerceId", MySqlDbType.Int32, seller.WooCommerceId.ToString());
-
-                bool querySuccess = command.ExecuteNonQuery() > 0;
-                long id = command.LastInsertedId;
-
-                Console.WriteLine("Success: " + querySuccess.ToString());
-                Console.WriteLine("Inserted seller with id: " + id.ToString());
-
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-                throw (e);
-            }
-            finally
-            {
-                con.Close();
-            }
+            return baseDML.Insert_Multiple(new List<Seller> { seller }, mapSellerToStrings).First();
         }
 
         // TODO: Take max_allowed_packet into account
-        public void Insert_Multiple(List<Seller> sellers)
+        public List<int> Insert_Multiple(List<Seller> sellers)
         {
-            var con = database.GetConnection();
-            try
-            {
-                // (name, email, address, postnumber, city, phonenumber, woocommerceId)
-                //VALUES
-
-                List<string> sellerParameters = new List<string>()
-                {
-                    "name",
-                    "email",
-                    "address",
-                    "postnumber",
-                    "city",
-                    "phonenumber",
-                    "woocommerceId"
-                };
-
-                CommandBuilder commandBuilder = new CommandBuilder("INSERT INTO sellers ");
-                commandBuilder.AddInsertParameters(sellerParameters);
-
-                List<List<string>> rows = new List<List<string>>();
-                foreach (Seller seller in sellers)
-                {
-                    rows.Add(mapSellerToStrings(seller));
-                }
-
-                commandBuilder.AddValuesToInsert(rows);
-                con.Open();
-
-                commandBuilder.CreateCommand(con);
-                commandBuilder.Command.CommandType = CommandType.Text;
-
-                bool querySuccess = commandBuilder.Command.ExecuteNonQuery() > 0;
-
-                Console.WriteLine("Success: " + querySuccess.ToString());
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-                throw (e);
-            }
-            finally
-            {
-                con.Close();
-            }
+            return baseDML.Insert_Multiple(sellers, mapSellerToStrings);
         }
 
         private List<string> mapSellerToStrings(Seller seller)
@@ -269,43 +123,7 @@ namespace Refashion.Database
 
         public void Update_Single(Seller seller)
         {
-            var con = database.GetConnection();
-            if(seller.Tag == 0)
-            {
-                throw new ArgumentException("Seller must have a valid Tag to be updated");
-            }
-            try
-            {
-                con.Open();
-
-                var query = "UPDATE sellers SET name=@name, email=@email, address=@address, postnumber=@postnumber, city=@city, phonenumber=@phonenumber, woocommerceId=@woocommerceId " +
-                            "WHERE id=@id";
-                command = new MySqlCommand(query, con);
-
-                addParameter("name", MySqlDbType.String, seller.Name);
-                addParameter("email", MySqlDbType.String, seller.Email);
-                addParameter("address", MySqlDbType.String, seller.Address);
-                addParameter("postnumber", MySqlDbType.Int32, seller.ZIP.ToString());
-                addParameter("city", MySqlDbType.String, seller.City);
-                addParameter("phonenumber", MySqlDbType.String, seller.PhoneNumber.ToString());
-                addParameter("woocommerceId", MySqlDbType.Int32, seller.WooCommerceId.ToString());
-                addParameter("id", MySqlDbType.Int32, seller.Tag.ToString());
-
-                bool querySuccess = command.ExecuteNonQuery() > 0;
-                long id = command.LastInsertedId;
-
-                Console.WriteLine("Success: " + querySuccess.ToString());
-                Console.WriteLine("Updated seller with id: " + seller.Tag.ToString());
-
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-            finally
-            {
-                con.Close();
-            }
+            Update_Multiple(new List<Seller> { seller });
         }
 
         public void Update_Multiple(List<Seller> sellers)
@@ -314,51 +132,7 @@ namespace Refashion.Database
             {
                 throw new ArgumentException("All sellers must have a valid tag");
             }
-
-            var con = database.GetConnection();
-            try
-            {
-                List<string> sellerParameters = new List<string>()
-                {
-                    "id",
-                    "name",
-                    "email",
-                    "address",
-                    "postnumber",
-                    "city",
-                    "phonenumber",
-                    "woocommerceId"
-                };
-
-                CommandBuilder commandBuilder = new CommandBuilder("INSERT INTO sellers ");
-                commandBuilder.AddInsertParameters(sellerParameters);
-
-                List<List<string>> rows = new List<List<string>>();
-                foreach (Seller seller in sellers)
-                {
-                    rows.Add(mapSellerWithTagToStrings(seller));
-                }
-
-                commandBuilder.AddValuesToInsert(rows);
-                commandBuilder.UpdateDuplicateKeys();
-
-                con.Open();
-
-                commandBuilder.CreateCommand(con);
-                commandBuilder.Command.CommandType = CommandType.Text;
-
-                bool querySuccess = commandBuilder.Command.ExecuteNonQuery() > 0;
-
-                Console.WriteLine("Success: " + querySuccess.ToString());
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-            finally
-            {
-                con.Close();
-            }
+            baseDML.Update_Multiple(sellers, mapSellerWithTagToStrings);
         }
 
         private List<string> mapSellerWithTagToStrings(Seller seller)
@@ -386,31 +160,9 @@ namespace Refashion.Database
                 throw new ArgumentException("Seller must have a valid Tag");
             }
 
-            var con = database.GetConnection();
-            try
-            {
-                con.Open();
+            bool success = baseDML.Delete_Multiple(new List<int> { seller.Tag });
 
-                var query = "DELETE FROM sellers WHERE id=@id";
-                command = new MySqlCommand(query, con);
-
-                addParameter("id", MySqlDbType.Int32, seller.Tag.ToString());
-
-                bool querySuccess = command.ExecuteNonQuery() > 0;
-                long id = command.LastInsertedId;
-
-                Console.WriteLine("Success: " + querySuccess.ToString());
-                Console.WriteLine("Deleted seller with id: " + seller.Tag.ToString());
-
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-            finally
-            {
-                con.Close();
-            }
+            Console.WriteLine("Success: " + success);
         }
 
         public void Delete_Multiple(List<Seller> sellers)
@@ -420,58 +172,9 @@ namespace Refashion.Database
                 throw new ArgumentException("All sellers must have a valid Tag");
             }
 
-            var con = database.GetConnection();
-            try
-            {
-                string query = "DELETE FROM sellers WHERE (id) IN " + "(";
-                StringBuilder queryBuilder = new StringBuilder(query);
+            bool success = baseDML.Delete_Multiple(sellers.Select(seller => seller.Tag).ToList());
 
-                List<string> sellerRows = new List<string>();
-                foreach (Seller seller in sellers)
-                {
-                    sellerRows.Add(string.Format("('{0}')", seller.Tag));
-                }
-
-                queryBuilder.Append(string.Join(",", sellerRows));
-                queryBuilder.Append(");");
-
-                con.Open();
-
-                command = new MySqlCommand(queryBuilder.ToString(), con);
-                command.CommandType = CommandType.Text;
-
-                bool querySuccess = command.ExecuteNonQuery() > 0;
-
-                Console.WriteLine("Success: " + querySuccess.ToString());
-                Console.WriteLine("Deleted " + sellerRows.Count + " sellers ");
-
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-            finally
-            {
-                con.Close();
-            }
-        }
-
-        // Value must be string
-        // Numbers are parsed
-        private void addParameter(string parameter, MySqlDbType parameterType, string value)
-        {
-            string parameterString = "@" + parameter;
-            command.Parameters.Add(parameterString, parameterType);
-
-            // add value of correct type
-            if(parameterType == MySqlDbType.String)
-            {
-                command.Parameters[parameterString].Value = value;
-            }
-            else if(parameterType == MySqlDbType.Int32)
-            {
-                command.Parameters[parameterString].Value = int.Parse(value);
-            }
+            Console.WriteLine("Success: " + success);
         }
     }
 }

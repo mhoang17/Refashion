@@ -11,10 +11,16 @@ namespace Refashion.Database
     public class BagDML : RefashionDML<Bag>
     {
         private DatabaseConnection database;
+        private BaseDML<Bag> baseDML;
 
         public BagDML()
         {
             database = new DatabaseConnection();
+            baseDML = new BaseDML<Bag>("bags", new List<string>()
+                {
+                    "sellerId",
+                    "added_at"
+                });
         }
         public void Delete_Multiple(List<Bag> bags)
         {
@@ -22,33 +28,9 @@ namespace Refashion.Database
             {
                 throw new ArgumentException("All Bags must have a valid Id");
             }
-            MySqlConnection con = database.GetConnection();
-            try
-            {
-                CommandBuilder commandBuilder = new CommandBuilder("DELETE FROM bags WHERE (id) IN ");
+            bool success = baseDML.Delete_Multiple(bags.Select(bag => bag.BagID).ToList());
 
-                commandBuilder.AddValuesToInsert(new List<List<string>>
-                {
-                    bags.Select(bag => bag.BagID.ToString()).ToList()
-                });
-
-                con.Open();
-
-                commandBuilder.CreateCommand(con);
-                commandBuilder.Command.CommandType = CommandType.Text;
-
-                bool querySuccess = commandBuilder.Command.ExecuteNonQuery() > 0;
-
-                Console.WriteLine("Success: " + querySuccess.ToString());
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-            finally
-            {
-                con.Close();
-            }
+            Console.WriteLine("Success: " + success);
         }
 
         public void Delete_Single(Bag bag)
@@ -58,105 +40,19 @@ namespace Refashion.Database
                 throw new ArgumentException("Bag must have a valid Id");
             }
 
-            var con = database.GetConnection();
-            try
-            {
-                con.Open();
+            bool success = baseDML.Delete_Multiple(new List<int> { bag.BagID });
 
-                CommandBuilder commandBuilder = new CommandBuilder("DELETE FROM bags WHERE ");
-
-                commandBuilder.AddEqualsParameter("id", bag.BagID.ToString());
-
-                commandBuilder.CreateCommand(con);
-
-                Console.WriteLine(commandBuilder.Command.CommandText);
-
-                bool querySuccess = commandBuilder.Command.ExecuteNonQuery() > 0;
-
-                Console.WriteLine("Success: " + querySuccess.ToString());
-                Console.WriteLine("Deleted bag with id: " + bag.BagID.ToString());
-
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-            finally
-            {
-                con.Close();
-            }
+            Console.WriteLine("Success: " + success);
         }
 
         public List<Bag> GetAll()
         {
-            List<Bag> bags = new List<Bag>();
-            MySqlConnection con = database.GetConnection();
-            try
-            {
-                con.Open();
-
-                CommandBuilder commandBuilder = new CommandBuilder("SELECT * FROM bags");
-
-                commandBuilder.CreateCommand(con);
-
-                MySqlDataReader reader = commandBuilder.Command.ExecuteReader();
-                while (reader.Read())
-                {
-                    bags.Add(mapToBag(reader));
-                }
-                reader.Close();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-            finally
-            {
-                con.Close();
-            }
-
-            return bags;
+            return baseDML.GetAll(mapToBag);
         }
 
-        public void Insert_Multiple(List<Bag> bags)
+        public List<int> Insert_Multiple(List<Bag> bags)
         {
-            var con = database.GetConnection();
-            try
-            {
-                List<string> bagParameters = new List<string>()
-                {
-                    "sellerId",
-                    "added_at"
-                };
-
-                CommandBuilder commandBuilder = new CommandBuilder("INSERT INTO bags ");
-                commandBuilder.AddInsertParameters(bagParameters);
-
-                List<List<string>> rows = new List<List<string>>();
-                foreach (Bag bag in bags)
-                {
-                    rows.Add(mapBagToStrings(bag));
-                }
-
-                commandBuilder.AddValuesToInsert(rows);
-                con.Open();
-
-                commandBuilder.CreateCommand(con);
-                commandBuilder.Command.CommandType = CommandType.Text;
-
-                bool querySuccess = commandBuilder.Command.ExecuteNonQuery() > 0;
-
-                Console.WriteLine("Success: " + querySuccess.ToString());
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-                throw (e);
-            }
-            finally
-            {
-                con.Close();
-            }
+            return baseDML.Insert_Multiple(bags, mapBagToStrings);
         }
 
         private List<string> mapBagToStrings(Bag bag)
@@ -170,80 +66,24 @@ namespace Refashion.Database
             return row;
         }
 
-        public void Insert_Single(Bag bag)
+        public int Insert_Single(Bag bag)
         {
-            Insert_Multiple(new List<Bag> { bag });
+            return baseDML.Insert_Multiple(new List<Bag> { bag }, mapBagToStrings).First();
         }
 
-        // TODO: Refactor as this is literally the same logic as Sellers with a different type
-        // Maybe a generic super class
         public List<Bag> Select_Multiple(string conditions)
         {
-            List<Bag> bags = new List<Bag>();
-            MySqlConnection con = database.GetConnection();
-            try
-            {
-                string query = "SELECT * FROM bags WHERE";
-                CommandBuilder commandBuilder = new CommandBuilder(query);
-
-                Dictionary<string, string> conditionDictionary = ParseConditionsToDictionary(conditions);
-                commandBuilder.AddLikeParameters(conditionDictionary);
-
-                commandBuilder.CreateCommand(con);
-
-                con.Open();
-
-                MySqlDataReader reader = commandBuilder.Command.ExecuteReader();
-                while (reader.Read())
-                {
-                    bags.Add(mapToBag(reader));
-                }
-                reader.Close();
-            }
-            catch (Exception e)
-            {
-                throw (e);
-            }
-            finally
-            {
-                con.Close();
-            }
+            Dictionary<string, string> conditionDictionary = ParseConditionsToDictionary(conditions);
+            List<Bag> bags = baseDML.Select_Multiple(conditionDictionary, mapToBag);
             return bags;
         }
 
-        // TODO: Almost same logic as Select_Multiple, but without list and with limit
         public Bag Select_Single(string conditions)
         {
             Bag bag = new Bag(0);
-            MySqlConnection con = database.GetConnection();
-            try
-            {
-                string query = "SELECT * FROM bags WHERE";
-                CommandBuilder commandBuilder = new CommandBuilder(query);
+            Dictionary<string, string> conditionDictionary = ParseConditionsToDictionary(conditions);
+            bag = baseDML.Select_Multiple(conditionDictionary, mapToBag, 1).First();
 
-                Dictionary<string, string> conditionDictionary = ParseConditionsToDictionary(conditions);
-                commandBuilder.AddLikeParameters(conditionDictionary);
-                commandBuilder.AddLimit(1);
-
-                commandBuilder.CreateCommand(con);
-
-                con.Open();
-
-                MySqlDataReader reader = commandBuilder.Command.ExecuteReader();
-                if(reader.Read())
-                {
-                    bag = mapToBag(reader);
-                }
-                reader.Close();
-            }
-            catch (Exception e)
-            {
-                throw (e);
-            }
-            finally
-            {
-                con.Close();
-            }
             return bag;
         }
 
@@ -279,45 +119,7 @@ namespace Refashion.Database
                 throw new ArgumentException("All bags must have a valid Id");
             }
 
-            MySqlConnection con = database.GetConnection();
-            try
-            {
-                List<string> bagParameters = new List<string>()
-                {
-                    "id",
-                    "sellerId",
-                    "added_at"
-                };
-
-                CommandBuilder commandBuilder = new CommandBuilder("INSERT INTO bags ");
-                commandBuilder.AddInsertParameters(bagParameters);
-
-                List<List<string>> rows = new List<List<string>>();
-                foreach (Bag bag in bags)
-                {
-                    rows.Add(mapBagWithIdToStrings(bag));
-                }
-
-                commandBuilder.AddValuesToInsert(rows);
-                commandBuilder.UpdateDuplicateKeys();
-
-                con.Open();
-
-                commandBuilder.CreateCommand(con);
-                commandBuilder.Command.CommandType = CommandType.Text;
-
-                bool querySuccess = commandBuilder.Command.ExecuteNonQuery() > 0;
-
-                Console.WriteLine("Success: " + querySuccess.ToString());
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.ToString());
-            }
-            finally
-            {
-                con.Close();
-            }
+            baseDML.Update_Multiple(bags, mapBagWithIdToStrings);
         }
 
         // Might not be the most efficient for updating a single element

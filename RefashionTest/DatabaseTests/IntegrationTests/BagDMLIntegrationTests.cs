@@ -100,7 +100,7 @@ namespace RefashionTest.DatabaseTests.IntegrationTests
 
         // Delete_Multiple tests
         [TestMethod, TestCategory("IntegrationTest")]
-        public void Delete_Multiple_Runs_Without_Errors()
+        public void Delete_Multiple_Given_Bags_Without_Id_Throws_Execption()
         {
             BagDML bagdml = new BagDML();
             List<Bag> bags = new List<Bag>

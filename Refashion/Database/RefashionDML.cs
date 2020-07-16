@@ -8,9 +8,9 @@ namespace Refashion.Database
 {
     interface RefashionDML<T>
     {
-        void Insert_Multiple(List<T> elements);
+        List<int> Insert_Multiple(List<T> elements);
 
-        void Insert_Single(T element);
+        int Insert_Single(T element);
 
         void Delete_Multiple(List<T> elements);
 
