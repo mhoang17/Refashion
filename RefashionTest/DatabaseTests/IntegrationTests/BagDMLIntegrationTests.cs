@@ -23,9 +23,13 @@ namespace RefashionTest.DatabaseTests.IntegrationTests
                 MySqlTransaction transaction = con.BeginTransaction();
 
                 // Drop foreign key, because they make things complicated
-                string dropConstraint = "ALTER TABLE bags DROP FOREIGN KEY seller";
-                MySqlCommand dropCommand = new MySqlCommand(dropConstraint, con);
-                dropCommand.ExecuteNonQuery();
+                string dropSellerConstraint = "ALTER TABLE bags DROP FOREIGN KEY seller";
+                MySqlCommand dropSellerCommand = new MySqlCommand(dropSellerConstraint, con);
+                dropSellerCommand.ExecuteNonQuery();
+
+                string dropBagConstraint = "ALTER TABLE products DROP FOREIGN KEY bag";
+                MySqlCommand dropBagCommand = new MySqlCommand(dropBagConstraint, con);
+                dropBagCommand.ExecuteNonQuery();
 
                 transaction.Commit();
             }
@@ -52,9 +56,13 @@ namespace RefashionTest.DatabaseTests.IntegrationTests
                 MySqlTransaction transaction = con.BeginTransaction();
 
                 // Put it back as to not break things
-                string addConstraint = "ALTER TABLE bags ADD CONSTRAINT seller FOREIGN KEY (sellerId) REFERENCES sellers(id)";
-                MySqlCommand addCommand = new MySqlCommand(addConstraint, con);
-                addCommand.ExecuteNonQuery();
+                string addSellerConstraint = "ALTER TABLE bags ADD CONSTRAINT seller FOREIGN KEY (sellerId) REFERENCES sellers(id)";
+                MySqlCommand addSellerCommand = new MySqlCommand(addSellerConstraint, con);
+                addSellerCommand.ExecuteNonQuery();
+
+                string addBagConstraint = "ALTER TABLE products ADD CONSTRAINT bag FOREIGN KEY (bagId) REFERENCES bags(id)";
+                MySqlCommand addBagCommand = new MySqlCommand(addBagConstraint, con);
+                addBagCommand.ExecuteNonQuery();
 
                 transaction.Commit();
             }
